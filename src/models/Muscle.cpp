@@ -34,6 +34,22 @@ void Muscle::releasePressure() {
   outputValve.close();
 }
 
+void Muscle::openInput() {
+  inputValve.open();
+}
+
+void Muscle::closeInput() {
+  inputValve.close();
+}
+
+void Muscle::openOutput() {
+  outputValve.open();
+}
+
+void Muscle::closeOutput() {
+  outputValve.close();
+}
+
 bool Muscle::isExtended() {
   return inputValve.isOpen() && !outputValve.isOpen();
 }

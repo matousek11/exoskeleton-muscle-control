@@ -16,6 +16,10 @@ class Muscle {
     void retract();
     void addPressure();
     void releasePressure();
+    void openInput();
+    void closeInput();
+    void openOutput();
+    void closeOutput();
     bool isExtended();
     String getStatus();
     void test();
