@@ -19,7 +19,7 @@ void setup() {
   leftMuscle = new Muscle(availableValvePins[0], availableValvePins[1]);
   rightMuscle = new Muscle(availableValvePins[2], availableValvePins[3]);
   Serial.println();
-  Serial.println("Unknown command. Type 'extend', 'retract', 'test', 'status', 'io', 'ic', 'oo', 'oc'.");
+  Serial.println("Unknown command. Type 'e - extend', 'r - retract', 'test', 'status', 'io', 'ic', 'oo', 'oc'.");
 }
 
 void loop() {
@@ -31,11 +31,11 @@ void muscleControl() {
     String command = Serial.readStringUntil('\n'); // read until Enter
     command.trim();
 
-    if (command.equalsIgnoreCase("extend")) {
+    if (command.equalsIgnoreCase("e")) {
       leftMuscle->extend();
       Serial.println(leftMuscle->getStatus());
     } 
-    else if (command.equalsIgnoreCase("retract")) {
+    else if (command.equalsIgnoreCase("r")) {
       leftMuscle->retract();
       Serial.println(leftMuscle->getStatus());
     }
@@ -71,9 +71,9 @@ void muscleControl() {
       leftMuscle->test();
     }
     else {
-      Serial.println("Unknown command. Type 'extend', 'retract', 'test', 'status', 'io', 'ic', 'oo', 'oc'.");
+      Serial.println("Unknown command. Type 'e - extend', 'r - retract', 'test', 'status', 'io', 'ic', 'oo', 'oc'.");
     }
-    Serial.println("Type 'extend', 'retract', 'test' or 'status'.");
+    Serial.println("Type 'e - extend', 'r - retract', 'test', 'status', 'io', 'ic', 'oo', 'oc'.");
   }
 }
 
