@@ -51,7 +51,7 @@ void Muscle::closeOutput() {
 }
 
 bool Muscle::isExtended() {
-  return inputValve.isOpen() && !outputValve.isOpen();
+  return !inputValve.isOpen() && outputValve.isOpen();
 }
 
 String Muscle::getStatus() {
