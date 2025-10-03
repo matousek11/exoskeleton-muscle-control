@@ -1,22 +1,22 @@
-#ifndef VALVE_H
-#define VALVE_H
+#ifndef VALVE_H_
+#define VALVE_H_
 
-#include "Arduino.h"
 #include "../enums/ValveType.h"
+#include "Arduino.h"
 
 class Valve {
-  private:
-    int controlPin;
-    ValveType type;
+ private:
+  int controlPin;
+  ValveType type;
 
-  public:
-    Valve(int controlPin, ValveType type);
+ public:
+  Valve(int controlPin, ValveType type);
 
-    void open();
-    void close();
-    bool isOpen();
-    String getStatus();
-    String getType();
+  void open();
+  void close();
+  bool isOpen();
+  String getStatus();
+  String getType();
 };
 
 #endif

@@ -1,13 +1,13 @@
 #include "Arduino.h"
-#include "models/Valve.h"
-#include "models/Muscle.h"
 #include "enums/ValveType.h"
+#include "models/Muscle.h"
+#include "models/Valve.h"
 #include "services/ArduinoMonitorService.h"
 
 const int availableValvePins[] = {4, 5, 6, 7, 10, 11, 12, 13};
 
 Muscle* leftMuscle;
-ArduinoMonitorService* arduinoMonitorService; 
+ArduinoMonitorService* arduinoMonitorService;
 
 void setup() {
   Serial.begin(9600);

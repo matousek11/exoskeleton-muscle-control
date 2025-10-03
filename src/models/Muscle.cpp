@@ -1,12 +1,15 @@
 #include "Muscle.h"
-#include "Valve.h"
+
 #include "../enums/ValveType.h"
+#include "Valve.h"
 
 Muscle::Muscle(int inputValvePin, int outputValvePin)
-  : inputValve(inputValvePin, ValveType::INLET), outputValve(outputValvePin, ValveType::OUTLET) {
-    extend();
-    Serial.println(String("Muscle initialiazed, inlet pin: ") + inputValvePin + String(", outlet pin: ") + outputValvePin);
-  }
+    : inputValve(inputValvePin, ValveType::INLET)
+    , outputValve(outputValvePin, ValveType::OUTLET) {
+  extend();
+  Serial.println(String("Muscle initialized, inlet pin: ") + inputValvePin +
+                 String(", outlet pin: ") + outputValvePin);
+}
 
 void Muscle::extend() {
   inputValve.close();
@@ -55,12 +58,13 @@ bool Muscle::isExtended() {
 }
 
 String Muscle::getStatus() {
-  return String("status: ") + (isExtended() ? "Muscle extended" : "Muscle retracted");
+  return String("status: ") +
+         (isExtended() ? "Muscle extended" : "Muscle retracted");
 }
 
 void Muscle::test() {
   Serial.println("Muscle test");
-  
+
   Serial.println("Retracting Muscle");
   delay(1000);
   retract();
@@ -69,7 +73,6 @@ void Muscle::test() {
   Serial.println("Extending Muscle");
   delay(1000);
   extend();
-
 
   delay(3000);
   Serial.println("Retracting Muscle");

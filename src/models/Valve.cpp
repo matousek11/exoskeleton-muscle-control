@@ -1,6 +1,7 @@
 #include "Valve.h"
-#include "Arduino.h"
+
 #include "../enums/ValveType.h"
+#include "Arduino.h"
 
 Valve::Valve(int pin, ValveType type) {
   this->controlPin = pin;

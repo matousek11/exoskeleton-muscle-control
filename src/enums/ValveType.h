@@ -1,9 +1,6 @@
-#ifndef VALVETYPE_H
-#define VALVETYPE_H
+#ifndef VALVETYPE_H_
+#define VALVETYPE_H_
 
-enum class ValveType {
-    INLET,
-    OUTLET
-};
+enum class ValveType { INLET, OUTLET };
 
 #endif
