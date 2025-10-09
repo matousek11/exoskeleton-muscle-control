@@ -1,16 +1,17 @@
 #ifndef MUSCLE_H_
 #define MUSCLE_H_
 
+#include "./../interfaces/IValve.h"
 #include "Arduino.h"
 #include "Valve.h"
 
 class Muscle {
  private:
-  Valve inputValve;
-  Valve outputValve;
+  IValve* inputValve;
+  IValve* outputValve;
 
  public:
-  Muscle(int inputValvePin, int outputValvePin);
+  Muscle(IValve* inputValve, IValve* outputValve);
 
   void extend();
   void retract();

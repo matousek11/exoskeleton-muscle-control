@@ -1,65 +1,65 @@
 #include "Muscle.h"
 
 #include "../enums/ValveType.h"
+#include "./../interfaces/IValve.h"
 #include "Valve.h"
 
-Muscle::Muscle(int inputValvePin, int outputValvePin)
-    : inputValve(inputValvePin, ValveType::INLET)
-    , outputValve(outputValvePin, ValveType::OUTLET) {
+Muscle::Muscle(IValve* inputValve, IValve* outputValve) {
+  this->inputValve = inputValve;
+  this->outputValve = outputValve;
   extend();
-  Serial.println(String("Muscle initialized, inlet pin: ") + inputValvePin +
-                 String(", outlet pin: ") + outputValvePin);
+  Serial.println(String("Muscle initialized, inlet pin: ") + inputValve->getValvePin() + String(", outlet pin: ") +
+                 outputValve->getValvePin());
 }
 
 void Muscle::extend() {
-  inputValve.close();
-  outputValve.open();
+  inputValve->close();
+  outputValve->open();
 }
 
 void Muscle::retract() {
-  outputValve.close();
-  inputValve.open();
+  outputValve->close();
+  inputValve->open();
 }
 
 void Muscle::addPressure() {
-  outputValve.close();
+  outputValve->close();
   delay(200);
-  inputValve.open();
+  inputValve->open();
   delay(50);
-  inputValve.close();
+  inputValve->close();
 }
 
 void Muscle::releasePressure() {
-  inputValve.close();
+  inputValve->close();
   delay(200);
-  outputValve.open();
+  outputValve->open();
   delay(50);
-  outputValve.close();
+  outputValve->close();
 }
 
 void Muscle::openInput() {
-  inputValve.open();
+  inputValve->open();
 }
 
 void Muscle::closeInput() {
-  inputValve.close();
+  inputValve->close();
 }
 
 void Muscle::openOutput() {
-  outputValve.open();
+  outputValve->open();
 }
 
 void Muscle::closeOutput() {
-  outputValve.close();
+  outputValve->close();
 }
 
 bool Muscle::isExtended() {
-  return !inputValve.isOpen() && outputValve.isOpen();
+  return !inputValve->isOpen() && outputValve->isOpen();
 }
 
 String Muscle::getStatus() {
-  return String("status: ") +
-         (isExtended() ? "Muscle extended" : "Muscle retracted");
+  return String("status: ") + (isExtended() ? "Muscle extended" : "Muscle retracted");
 }
 
 void Muscle::test() {
