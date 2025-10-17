@@ -1,9 +1,10 @@
 #include "ArduinoMonitorService.h"
 
+#include "./../helpers/Debugger.h"
 #include "./../models/Muscle.h"
 #include "Arduino.h"
 
-void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle) {
+void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope) {
   bool unknownCommand = false;
 
   if (Serial.available()) {
@@ -40,6 +41,31 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle) {
       Serial.println(muscle->getStatus());
     } else if (command.equalsIgnoreCase("test")) {
       muscle->test();
+    } else if (command.equalsIgnoreCase("dg10")) {
+      Serial.println("Show gyroscope output for 10 seconds");
+      unsigned long startTime = millis();
+
+      while (millis() - startTime < 10000) {
+        gyroscope->updateValues();
+        gyroscope->printValues();
+      }
+    } else if (command.equalsIgnoreCase("dg60")) {
+      Serial.println("Show gyroscope output for 60 seconds");
+      unsigned long startTime = millis();
+
+      while (millis() - startTime < 60000) {
+        gyroscope->updateValues();
+        gyroscope->printValues();
+      }
+    } else if (command.equalsIgnoreCase("ia")) {
+      Serial.println("Init axis");
+      gyroscope->calibrateXAngle();
+      gyroscope->calibrateYAngle();
+      gyroscope->calibrateZAngle();
+    } else if (command.equalsIgnoreCase("t45")) {
+      Serial.println("target 45 degrees");
+    } else if (command.equalsIgnoreCase("i2c")) {
+      Debugger::scanI2C();
     } else {
       unknownCommand = true;
     }
@@ -49,8 +75,7 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle) {
   }
 }
 
-void ArduinoMonitorService::printPossibleCommands(
-    String* inputCommand = nullptr, bool unknownCommand = false) {
+void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unknownCommand) {
   Serial.println();
   if (inputCommand != nullptr) {
     Serial.println("---- Input ----");
@@ -62,11 +87,16 @@ void ArduinoMonitorService::printPossibleCommands(
 
   Serial.println("--- Commands ---");
   Serial.println(
-      "Muscle commands: 'e' - extend, 'r' - retract, 'test', 'status'");
+      "Muscle commands: 'e' - extend, 'r' - retract, 'test' - tests muscles valves, 'status' - status of muscle");
   Serial.println(
       "Commands for valves on muscle: 'io' - open input valve, 'ic' - close "
       "input valve, 'oo' - "
       "open output valve, 'oc' - close output valve");
+  Serial.println(
+      "Commands for gyroscope (MPU6050): 'dg10/dg60' - show gyroscope output for 10s/60s, 'ia' - init axis (first run "
+      "dg10)");
+  Serial.println("Commands for feedback loop algorithms: 't45' - target 45 degrees");
+  Serial.println("Debug tools: 'i2c' - I2C device scanner");
 }
 
 void ArduinoMonitorService::clearSerialMonitor() {

@@ -2,6 +2,7 @@
 #include "Arduino.h"
 #include "Wire.h"
 #include "enums/ValveType.h"
+#include "models/Gyroscope.h"
 #include "models/Muscle.h"
 #include "models/Valve.h"
 #include "services/ArduinoMonitorService.h"
@@ -11,19 +12,23 @@ const int availableValvePins[] = {4, 5, 6, 7, 10, 11, 12, 13};
 
 Muscle* leftMuscle;
 ValveFactory* valveFactory;
+Gyroscope* gyroscope;
 ArduinoMonitorService* arduinoMonitorService;
 
 void setup() {
   Serial.begin(9600);
+  // needed for MPU6050 readings and I2C scanner
+  Wire.begin();
 
   arduinoMonitorService = new ArduinoMonitorService();
   valveFactory = new ValveFactory();
 
+  gyroscope = new Gyroscope(0x68);
   leftMuscle = new Muscle(valveFactory->createValve(availableValvePins[0], ValveType::INLET),
                           valveFactory->createValve(1, ValveType::OUTLET, 0X60));
   arduinoMonitorService->printPossibleCommands(nullptr);
 }
 
 void loop() {
-  arduinoMonitorService->controlThroughMonitor(leftMuscle);
+  arduinoMonitorService->controlThroughMonitor(leftMuscle, gyroscope);
 }
