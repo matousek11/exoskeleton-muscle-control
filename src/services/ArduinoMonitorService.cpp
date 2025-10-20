@@ -91,7 +91,8 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
 
   Serial.println("--- Commands ---");
   Serial.println(
-      "Muscle commands: 'e' - extend, 'r' - retract, 'test' - tests muscles valves, 'status' - status of muscle");
+      "Muscle commands: 'e' - extend, 'r' - retract, '+' - pressurize valve for 50ms, '-' - depressurize valve for "
+      "50ms, 'test' - tests muscles valves, 'status' - status of muscle");
   Serial.println(
       "Commands for valves on muscle: 'io' - open input valve, 'ic' - close "
       "input valve, 'oo' - "
