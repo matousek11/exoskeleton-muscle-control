@@ -1,10 +1,13 @@
 #include "ArduinoMonitorService.h"
 
+#include "./../control-algorithms/PIDControlAlgorithm.h"
 #include "./../helpers/Debugger.h"
+#include "./../interfaces/IControlAlgorithm.h"
 #include "./../models/Muscle.h"
 #include "Arduino.h"
 
-void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope) {
+void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope,
+                                                  IControlAlgorithm* controlAlgorithm) {
   bool unknownCommand = false;
 
   if (Serial.available()) {
@@ -64,6 +67,7 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyr
       gyroscope->calibrateZAngle();
     } else if (command.equalsIgnoreCase("t45")) {
       Serial.println("target 45 degrees");
+      controlAlgorithm->controlMuscle(muscle, gyroscope, 10000);
     } else if (command.equalsIgnoreCase("i2c")) {
       Debugger::scanI2C();
     } else {

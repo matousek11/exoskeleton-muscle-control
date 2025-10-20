@@ -11,7 +11,7 @@ Gyroscope::Gyroscope(uint8_t addrOfMPU6050) {
 }
 
 void Gyroscope::initialize() {
-  Serial.print("Gyroscope startup on address ");
+  Serial.print("Gyroscope startup on address 0x");
   Serial.println(addrOfMPU6050, HEX);
   mpu->initialize();
 
@@ -22,8 +22,14 @@ void Gyroscope::initialize() {
       delay(1000);
     }
   }
-
   Serial.println("Gyroscope initialized");
+
+  Serial.println("Aligning gyroscope angle with physical device...");
+  unsigned long startTime = millis();
+  while (millis() - startTime < 10000) {
+    updateValues();
+  }
+  Serial.println("Gyroscope aligned");
 }
 
 void Gyroscope::updateValues() {

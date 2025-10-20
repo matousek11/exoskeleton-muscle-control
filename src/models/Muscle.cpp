@@ -22,19 +22,19 @@ void Muscle::retract() {
   inputValve->open();
 }
 
-void Muscle::addPressure() {
+void Muscle::addPressure(int pressureTime) {
   outputValve->close();
   delay(200);
   inputValve->open();
-  delay(50);
+  delay(pressureTime);
   inputValve->close();
 }
 
-void Muscle::releasePressure() {
+void Muscle::releasePressure(int pressureTime) {
   inputValve->close();
   delay(200);
   outputValve->open();
-  delay(50);
+  delay(pressureTime);
   outputValve->close();
 }
 

@@ -1,6 +1,7 @@
 #include "Adafruit_MotorShield.h"
 #include "Arduino.h"
 #include "Wire.h"
+#include "control-algorithms/PIDControlAlgorithm.h"
 #include "enums/ValveType.h"
 #include "models/Gyroscope.h"
 #include "models/Muscle.h"
@@ -13,6 +14,7 @@ const int availableValvePins[] = {4, 5, 6, 7, 10, 11, 12, 13};
 Muscle* leftMuscle;
 ValveFactory* valveFactory;
 Gyroscope* gyroscope;
+IControlAlgorithm* controlAlgorithm;
 ArduinoMonitorService* arduinoMonitorService;
 
 void setup() {
@@ -24,11 +26,12 @@ void setup() {
   valveFactory = new ValveFactory();
 
   gyroscope = new Gyroscope(0x68);
+  controlAlgorithm = new PIDControlAlgorithm();
   leftMuscle = new Muscle(valveFactory->createValve(availableValvePins[0], ValveType::INLET),
                           valveFactory->createValve(1, ValveType::OUTLET, 0X60));
   arduinoMonitorService->printPossibleCommands(nullptr);
 }
 
 void loop() {
-  arduinoMonitorService->controlThroughMonitor(leftMuscle, gyroscope);
+  arduinoMonitorService->controlThroughMonitor(leftMuscle, gyroscope, controlAlgorithm);
 }
