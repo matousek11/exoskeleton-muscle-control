@@ -1,0 +1,274 @@
+---- Output ----
+target 70 degrees
+Starting PID control for 20s...
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Opening Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+Target: 70.00 | Angle: 55.84 | Error: 14.16 | Output: 14.86
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Opening Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+Target: 70.00 | Angle: 59.81 | Error: 10.19 | Output: 11.47
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Opening Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+Target: 70.00 | Angle: 61.94 | Error: 8.06 | Output: 11.45
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Opening Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+Target: 70.00 | Angle: 63.11 | Error: 6.89 | Output: 11.76
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Opening Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+Target: 70.00 | Angle: 64.13 | Error: 5.87 | Output: 11.54
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 65.11 | Error: 4.89 | Output: 11.13
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 65.95 | Error: 4.05 | Output: 9.98
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 66.78 | Error: 3.22 | Output: 9.27
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.55 | Error: 2.45 | Output: 8.58
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 68.26 | Error: 1.74 | Output: 7.97
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 69.00 | Error: 1.00 | Output: 7.12
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 69.64 | Error: 0.36 | Output: 6.49
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 70.23 | Error: -0.23 | Output: 5.84
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 70.81 | Error: -0.81 | Output: 5.10
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 71.38 | Error: -1.38 | Output: 4.33
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 71.88 | Error: -1.88 | Output: 3.66
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 72.41 | Error: -2.41 | Output: 2.81
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 72.87 | Error: -2.87 | Output: 2.12
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 73.29 | Error: -3.29 | Output: 1.43
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 73.70 | Error: -3.70 | Output: 0.66
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 74.05 | Error: -4.05 | Output: -0.00
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 74.42 | Error: -4.42 | Output: -0.81
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 74.73 | Error: -4.73 | Output: -1.49
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 75.06 | Error: -5.06 | Output: -2.29
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 75.36 | Error: -5.36 | Output: -3.05
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 75.62 | Error: -5.62 | Output: -3.73
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 75.89 | Error: -5.89 | Output: -4.54
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Opening Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 76.14 | Error: -6.14 | Output: -5.27
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Opening Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 76.13 | Error: -6.13 | Output: -5.87
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Opening Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 76.19 | Error: -6.19 | Output: -6.93
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Opening Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 76.29 | Error: -6.29 | Output: -8.04
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Opening Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 76.40 | Error: -6.40 | Output: -9.16
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Opening Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 75.64 | Error: -5.64 | Output: -8.53
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 74.01 | Error: -4.01 | Output: -6.57
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 73.58 | Error: -3.58 | Output: -6.90
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 73.26 | Error: -3.26 | Output: -6.90
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 72.91 | Error: -2.91 | Output: -6.68
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 72.58 | Error: -2.58 | Output: -6.50
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 72.22 | Error: -2.22 | Output: -6.22
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 71.96 | Error: -1.96 | Output: -6.19
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 71.67 | Error: -1.67 | Output: -5.91
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 71.43 | Error: -1.43 | Output: -5.81
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 71.23 | Error: -1.23 | Output: -5.74
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 71.03 | Error: -1.03 | Output: -5.57
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 70.81 | Error: -0.81 | Output: -5.35
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 70.57 | Error: -0.57 | Output: -5.06
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 70.37 | Error: -0.37 | Output: -4.93
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 70.24 | Error: -0.24 | Output: -4.86
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 70.07 | Error: -0.07 | Output: -4.62
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 69.88 | Error: 0.12 | Output: -4.36
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 69.77 | Error: 0.23 | Output: -4.32
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 69.65 | Error: 0.35 | Output: -4.11
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 69.53 | Error: 0.47 | Output: -3.94
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 69.35 | Error: 0.65 | Output: -3.61
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 69.22 | Error: 0.78 | Output: -3.44
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 69.12 | Error: 0.88 | Output: -3.29
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 68.98 | Error: 1.02 | Output: -2.99
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 68.90 | Error: 1.10 | Output: -2.90
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 68.78 | Error: 1.22 | Output: -2.61
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 68.62 | Error: 1.38 | Output: -2.26
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 68.52 | Error: 1.48 | Output: -2.08
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 68.40 | Error: 1.60 | Output: -1.80
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 68.35 | Error: 1.65 | Output: -1.72
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 68.30 | Error: 1.70 | Output: -1.52
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 68.20 | Error: 1.80 | Output: -1.17
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 68.09 | Error: 1.91 | Output: -0.91
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 68.01 | Error: 1.99 | Output: -0.68
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.94 | Error: 2.06 | Output: -0.45
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.86 | Error: 2.14 | Output: -0.16
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.73 | Error: 2.27 | Output: 0.21
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.62 | Error: 2.38 | Output: 0.51
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.58 | Error: 2.42 | Output: 0.66
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.55 | Error: 2.45 | Output: 0.87
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.58 | Error: 2.42 | Output: 0.66
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.55 | Error: 2.45 | Output: 0.87
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.44 | Error: 2.56 | Output: 1.31
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.55 | Error: 2.45 | Output: 0.87
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.44 | Error: 2.56 | Output: 1.31
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.44 | Error: 2.56 | Output: 1.31
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.39 | Error: 2.61 | Output: 1.48
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.39 | Error: 2.61 | Output: 1.48
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.33 | Error: 2.67 | Output: 1.78
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+Target: 70.00 | Angle: 67.33 | Error: 2.67 | Output: 1.78
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.32 | Error: 2.68 | Output: 1.93
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.24 | Error: 2.76 | Output: 2.33
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 4 on board with address: 60
+PHYSICAL MOVEMENT: Closing Outlet valve, motor: 3 on board with address: 60
+Target: 70.00 | Angle: 67.19 | Error: 2.81 | Output: 2.58

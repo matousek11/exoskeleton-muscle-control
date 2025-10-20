@@ -27,8 +27,8 @@ void setup() {
 
   gyroscope = new Gyroscope(0x68);
   controlAlgorithm = new PIDControlAlgorithm();
-  leftMuscle = new Muscle(valveFactory->createValve(availableValvePins[0], ValveType::INLET),
-                          valveFactory->createValve(1, ValveType::OUTLET, 0X60));
+  leftMuscle = new Muscle(valveFactory->createValve(4, ValveType::OUTLET, 0X60),
+                          valveFactory->createValve(3, ValveType::OUTLET, 0X60));
   arduinoMonitorService->printPossibleCommands(nullptr);
 }
 

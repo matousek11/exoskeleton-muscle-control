@@ -23,6 +23,10 @@ void Muscle::retract() {
 }
 
 void Muscle::addPressure(int pressureTime) {
+  if (pressureTime < 20) {
+    pressureTime = 20;
+  }
+
   outputValve->close();
   delay(200);
   inputValve->open();
@@ -31,6 +35,10 @@ void Muscle::addPressure(int pressureTime) {
 }
 
 void Muscle::releasePressure(int pressureTime) {
+  if (pressureTime < 20) {
+    pressureTime = 20;
+  }
+
   inputValve->close();
   delay(200);
   outputValve->open();

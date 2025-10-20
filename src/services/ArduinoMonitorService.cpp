@@ -65,9 +65,9 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyr
       gyroscope->calibrateXAngle();
       gyroscope->calibrateYAngle();
       gyroscope->calibrateZAngle();
-    } else if (command.equalsIgnoreCase("t45")) {
-      Serial.println("target 45 degrees");
-      controlAlgorithm->controlMuscle(muscle, gyroscope, 10000);
+    } else if (command.equalsIgnoreCase("t70")) {
+      Serial.println("target 70 degrees");
+      controlAlgorithm->controlMuscle(muscle, gyroscope, 20000);
     } else if (command.equalsIgnoreCase("i2c")) {
       Debugger::scanI2C();
     } else {
@@ -100,7 +100,7 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
   Serial.println(
       "Commands for gyroscope (MPU6050): 'dg10/dg60' - show gyroscope output for 10s/60s, 'ia' - init axis (first run "
       "dg10)");
-  Serial.println("Commands for feedback loop algorithms: 't45' - target 45 degrees");
+  Serial.println("Commands for feedback loop algorithms: 't70' - target 70 degrees");
   Serial.println("Debug tools: 'i2c' - I2C device scanner");
 }
 

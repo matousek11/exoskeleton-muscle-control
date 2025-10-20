@@ -7,13 +7,13 @@ PIDControlAlgorithm::PIDControlAlgorithm() {
 void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, int controlTime) {
   // --- PID tuning parameters ---
   const float Kp = 1.2f;   // Proportional gain
-  const float Ki = 0.05f;  // Integral gain
+  const float Ki = 0.35f;  // Integral gain
   const float Kd = 0.3f;   // Derivative gain
 
   const float targetTolerance = 5;
   const float valveOpenTimeClamp = 300;
 
-  float targetXAngle = 45;
+  float targetXAngle = 70;
 
   // --- Control setup ---
   const int loopDelay = 50;  // PID update every 50ms
@@ -24,7 +24,7 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
 
   bool isFirstCycle = true;
 
-  Serial.println("Starting PID control for 10s...");
+  Serial.println("Starting PID control for 20s...");
 
   unsigned long startTime = millis();
   while (millis() - startTime < (unsigned long)controlTime) {
@@ -44,9 +44,9 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
 
     if (!isFirstCycle) {
       // --- Apply control ---
-      if (output > targetTolerance && output < valveOpenTimeClamp) {
+      if (abs(error) > 5 && output > targetTolerance && output < valveOpenTimeClamp) {
         muscle->addPressure(abs(output));  // Increase angle
-      } else if (output < -targetTolerance && output < valveOpenTimeClamp) {
+      } else if (abs(error) > 5 && output < -targetTolerance && output < valveOpenTimeClamp) {
         muscle->releasePressure(abs(output));  // Decrease angle
       } else {
         // Small correction area — hold position
@@ -59,6 +59,8 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
       Serial.print(targetXAngle);
       Serial.print(" | Angle: ");
       Serial.print(currentAngle);
+      Serial.print(" | Error: ");
+      Serial.print(error);
       Serial.print(" | Output: ");
       Serial.println(output);
     }
