@@ -8,7 +8,7 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
   // --- PID tuning parameters ---
   const float Kp = 1.2f;   // Proportional gain
   const float Ki = 0.35f;  // Integral gain
-  const float Kd = 0.3f;   // Derivative gain
+  const float Kd = 0.5f;   // Derivative gain
 
   const float targetTolerance = 5;
   const float valveOpenTimeClamp = 300;
@@ -37,32 +37,44 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
 
     // --- PID calculations ---
     float error = targetXAngle - currentAngle;
-    integral += error * deltaTime;
-    float derivative = (error - previousError) / deltaTime;
+    if (abs(error) > targetTolerance) {  // do not calculate when in target tolerance
+      integral += error * deltaTime;
+      float derivative = (error - previousError) / deltaTime;
 
-    float output = Kp * error + Ki * integral + Kd * derivative;
+      float output = Kp * error + Ki * integral + Kd * derivative;
 
-    if (!isFirstCycle) {
-      // --- Apply control ---
-      if (abs(error) > 5 && output > targetTolerance && output < valveOpenTimeClamp) {
-        muscle->addPressure(abs(output));  // Increase angle
-      } else if (abs(error) > 5 && output < -targetTolerance && output < valveOpenTimeClamp) {
-        muscle->releasePressure(abs(output));  // Decrease angle
-      } else {
-        // Small correction area — hold position
-        muscle->closeInput();
-        muscle->closeOutput();
+      if (!isFirstCycle) {
+        // --- Apply control ---
+        if (abs(error) > targetTolerance && output > targetTolerance) {
+          if (output > valveOpenTimeClamp) {  // upper clamp
+            output = valveOpenTimeClamp;
+          }
+
+          muscle->addPressure(abs(output));  // Increase angle
+        } else if (abs(error) > targetTolerance && output < -targetTolerance) {
+          if (output > valveOpenTimeClamp) {  // upper clamp
+            output = valveOpenTimeClamp;
+          }
+
+          muscle->releasePressure(abs(output));  // Decrease angle
+        } else {
+          // Small correction area — hold position
+          muscle->closeInput();
+          muscle->closeOutput();
+        }
+
+        // --- Debug info ---
+        Serial.print("Target: ");
+        Serial.print(targetXAngle);
+        Serial.print(" | Angle: ");
+        Serial.print(currentAngle);
+        Serial.print(" | Error: ");
+        Serial.print(error);
+        Serial.print(" | Output: ");
+        Serial.print(output);
+        Serial.print(" | Time (ms): ");
+        Serial.println(now);
       }
-
-      // --- Debug info ---
-      Serial.print("Target: ");
-      Serial.print(targetXAngle);
-      Serial.print(" | Angle: ");
-      Serial.print(currentAngle);
-      Serial.print(" | Error: ");
-      Serial.print(error);
-      Serial.print(" | Output: ");
-      Serial.println(output);
     }
 
     // Prepare for next iteration
