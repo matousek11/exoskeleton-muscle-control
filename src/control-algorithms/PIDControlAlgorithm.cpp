@@ -6,9 +6,9 @@ PIDControlAlgorithm::PIDControlAlgorithm() {
 
 void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, int controlTime) {
   // --- PID tuning parameters ---
-  const float Kp = 1.2f;   // Proportional gain
-  const float Ki = 0.35f;  // Integral gain
-  const float Kd = 0.5f;   // Derivative gain
+  const float Kp = 0.9f;   // Proportional gain
+  const float Ki = 0.08f;  // Integral gain
+  const float Kd = 1.2f;   // Derivative gain
 
   const float targetTolerance = 5;
   const float valveOpenTimeClamp = 300;
@@ -32,7 +32,9 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
     float deltaTime = (now - previousTime) / 1000.0f;  // seconds
 
     // --- Read current angle ---
-    gyroscope->updateValues();
+    for (int i = 0; i < 3; i++) {
+      gyroscope->updateValues();
+    }
     float currentAngle = gyroscope->getXAngle();
 
     // --- PID calculations ---

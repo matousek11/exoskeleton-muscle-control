@@ -53,7 +53,7 @@ class Gyroscope {
   /**
    * @brief Time between last and new measurement.
    */
-  float timeStep = 0.01;
+  float timeStep = 0.003;
 
   /**
    * Used to log time of start of measurement.
