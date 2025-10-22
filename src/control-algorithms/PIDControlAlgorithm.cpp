@@ -28,6 +28,17 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
 
   unsigned long startTime = millis();
   while (millis() - startTime < (unsigned long)controlTime) {
+    unsigned long loopStartTime = millis();
+    // stop command
+    if (Serial.available() > 0) {
+      char c = Serial.read();
+      if (c == 'c') {
+        Serial.println("--- Emergency stop ---");
+        muscle->extend();
+        break;
+      }
+    }
+
     unsigned long now = millis();
     float deltaTime = (now - previousTime) / 1000.0f;  // seconds
 
@@ -75,15 +86,21 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
         Serial.print(" | Output: ");
         Serial.print(output);
         Serial.print(" | Time (ms): ");
-        Serial.println(now);
+        Serial.print(now);
       }
     }
 
     // Prepare for next iteration
     previousError = error;
     previousTime = now;
-    isFirstCycle = false;
 
     delay(loopDelay);
+
+    if (!isFirstCycle) {
+      Serial.print(" | Loop time (ms): ");
+      Serial.println(millis() - loopStartTime);
+    }
+
+    isFirstCycle = false;
   }
 }
