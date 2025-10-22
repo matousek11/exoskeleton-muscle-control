@@ -53,17 +53,18 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
     float error = targetXAngle - currentAngle;
     if (abs(error) > targetTolerance) {  // do not calculate when in target tolerance
       integral += error * deltaTime;
-      if (integral > 100) {
-        integral = 100;
-      } else if (integral < -100) {
-        integral = -100;
+      int clamp = 100;
+      if (integral > clamp) {
+        integral = clamp;
+      } else if (integral < -clamp) {
+        integral = -clamp;
       }
 
       float derivative = (error - previousError) / (deltaTime + 20);
-      if (derivative > 100) {
-        derivative = 100;
-      } else if (derivative < -100) {
-        derivative = -100;
+      if (derivative > clamp) {
+        derivative = clamp;
+      } else if (derivative < -clamp) {
+        derivative = -clamp;
       }
 
       output = Kp * error + Ki * integral + Kd * derivative;
