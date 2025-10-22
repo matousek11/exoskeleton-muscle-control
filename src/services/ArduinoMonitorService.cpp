@@ -68,6 +68,7 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyr
     } else if (command.equalsIgnoreCase("t70")) {
       Serial.println("target 70 degrees");
       controlAlgorithm->controlMuscle(muscle, gyroscope, 20000);
+      muscle->extend();
     } else if (command.equalsIgnoreCase("i2c")) {
       Debugger::scanI2C();
     } else {
