@@ -18,7 +18,7 @@ IControlAlgorithm* controlAlgorithm;
 ArduinoMonitorService* arduinoMonitorService;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   // needed for MPU6050 readings and I2C scanner
   Wire.begin();
 
