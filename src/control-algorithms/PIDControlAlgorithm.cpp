@@ -27,6 +27,7 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
   Serial.println("Starting PID control for 20s...");
 
   unsigned long startTime = millis();
+  float output = 0;
   while (millis() - startTime < (unsigned long)controlTime) {
     unsigned long loopStartTime = millis();
     // stop command
@@ -54,7 +55,7 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
       integral += error * deltaTime;
       float derivative = (error - previousError) / deltaTime;
 
-      float output = Kp * error + Ki * integral + Kd * derivative;
+      output = Kp * error + Ki * integral + Kd * derivative;
 
       if (!isFirstCycle) {
         // --- Apply control ---
@@ -75,20 +76,20 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
           muscle->closeInput();
           muscle->closeOutput();
         }
-
-        // --- Debug info ---
-        Serial.print("Target: ");
-        Serial.print(targetXAngle);
-        Serial.print(" | Angle: ");
-        Serial.print(currentAngle);
-        Serial.print(" | Error: ");
-        Serial.print(error);
-        Serial.print(" | Output: ");
-        Serial.print(output);
-        Serial.print(" | Time (ms): ");
-        Serial.print(now);
       }
     }
+
+    // --- Debug info ---
+    Serial.print("Target: ");  // PID not printing when at target
+    Serial.print(targetXAngle);
+    Serial.print(" | Angle: ");
+    Serial.print(currentAngle);
+    Serial.print(" | Error: ");
+    Serial.print(error);
+    Serial.print(" | Output: ");
+    Serial.print(output);
+    Serial.print(" | Time (ms): ");
+    Serial.print(now);
 
     // Prepare for next iteration
     previousError = error;
