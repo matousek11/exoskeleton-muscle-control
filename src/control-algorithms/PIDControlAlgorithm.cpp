@@ -8,7 +8,7 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
   // --- PID tuning parameters ---
   const float Kp = 0.9f;   // Proportional gain
   const float Ki = 0.08f;  // Integral gain
-  const float Kd = 1.0f;   // Derivative gain
+  const float Kd = 1.4f;   // Derivative gain
 
   const float targetTolerance = 5;
   const float valveOpenTimeClamp = 300;
