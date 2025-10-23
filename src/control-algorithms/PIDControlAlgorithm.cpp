@@ -1,10 +1,14 @@
 #include "PIDControlAlgorithm.h"
 
+#include "./../models/ControlTarget.h"
+#include "./../models/SpecificControlTarget.h"
+
 PIDControlAlgorithm::PIDControlAlgorithm() {
   Serial.println("Creatin PID control algorithm class");
 }
 
-void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, int controlTime) {
+void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, int controlTime, ControlTarget targets[],
+                                        size_t number_of_targets) {
   // --- PID tuning parameters ---
   const float Kp = 0.9f;   // Proportional gain
   const float Ki = 0.08f;  // Integral gain
@@ -12,8 +16,6 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
 
   const float targetTolerance = 5;
   const float valveOpenTimeClamp = 300;
-
-  float targetXAngle = 70;
 
   // --- Control setup ---
   const int loopDelay = 50;  // PID update every 50ms
@@ -24,10 +26,17 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
 
   bool isFirstCycle = true;
 
-  Serial.println("Starting PID control for 20s...");
-
   unsigned long startTime = millis();
+  setSpecificControlTargets(targets, number_of_targets, startTime, controlTime);
+
+  float targetXAngle = getTargetAngle();
+
+  float proportionalPart = 0;
+  float integralPart = 0;
+  float derivativePart = 0;
   float output = 0;
+
+  Serial.println("Starting PID control for 20s...");
   while (millis() - startTime < (unsigned long)controlTime) {
     unsigned long loopStartTime = millis();
     // stop command
@@ -60,7 +69,11 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
         integral = -clamp;
       }
 
-      float deltaAddition = 20;
+      float deltaAddition = 300;  // fix extremely big derivative caused by short time in first cycle
+      if (!isFirstCycle) {
+        deltaAddition = 0;
+      }
+
       float derivative = (error - previousError) / (deltaTime + deltaAddition);
       if (derivative > clamp) {
         derivative = clamp;
@@ -68,7 +81,10 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
         derivative = -clamp;
       }
 
-      output = Kp * error + Ki * integral + Kd * derivative;
+      proportionalPart = Kp * error;
+      integralPart = Ki * integral;
+      derivativePart = Kd * derivative;
+      output = proportionalPart + integralPart + derivativePart;
 
       if (!isFirstCycle) {
         // --- Apply control ---
@@ -93,7 +109,7 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
     }
 
     // --- Debug info ---
-    Serial.print("Target: ");  // PID not printing when at target
+    Serial.print("Target: ");
     Serial.print(targetXAngle);
     Serial.print(" | Angle: ");
     Serial.print(currentAngle);
@@ -103,6 +119,12 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
     Serial.print(output);
     Serial.print(" | Time (ms): ");
     Serial.print(now);
+    Serial.print(" | Prop: ");
+    Serial.print(proportionalPart);
+    Serial.print(" | Der: ");
+    Serial.print(derivativePart);
+    Serial.print(" | Int: ");
+    Serial.print(integralPart);
 
     // Prepare for next iteration
     previousError = error;
@@ -110,11 +132,63 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
 
     delay(loopDelay);
 
-    if (!isFirstCycle) {
-      Serial.print(" | Loop time (ms): ");
-      Serial.println(millis() - loopStartTime);
-    }
+    Serial.print(" | Loop time (ms): ");
+    Serial.println(millis() - loopStartTime);
 
+    targetXAngle = getTargetAngle();
     isFirstCycle = false;
   }
+
+  muscle->extend();
+  deleteTargets();
+}
+
+float PIDControlAlgorithm::getTargetAngle() {
+  for (size_t i = numberOfTargets; i-- > 0;) {
+    if (specificControlTargets[i]->getActivationPointTime() <= millis()) {
+      return specificControlTargets[i]->getTargetAngle();
+    }
+  }
+
+  Serial.println("Error: No target angle found, setting target to 0deg");
+  return 0;
+}
+
+void PIDControlAlgorithm::setSpecificControlTargets(ControlTarget targets[], size_t numberOfControlTargets,
+                                                    float startTime, float controlTime) {
+  // Check integrity of array
+  float previousValue = 0;
+  for (size_t i = 0; i < numberOfControlTargets; ++i) {
+    float activationPoint = targets[i].getActivationPoint();
+    if (previousValue > activationPoint) {
+      Serial.println("Error: control targets array doesnt have ascending activation point values");
+      while (true);
+    }
+
+    previousValue = activationPoint;
+  }
+
+  // Allocate array of pointers
+  specificControlTargets = new SpecificControlTarget*[numberOfControlTargets];
+  numberOfTargets = numberOfControlTargets;
+
+  // Fill array with specific control targets
+  for (size_t i = 0; i < numberOfControlTargets; ++i) {
+    specificControlTargets[i] = targets[i].calculateSpecificControlTarget(startTime, controlTime);
+  }
+}
+
+void PIDControlAlgorithm::deleteTargets() {
+  if (specificControlTargets != nullptr) {
+    for (size_t i = 0; i < numberOfTargets; ++i) {
+      delete specificControlTargets[i];
+    }
+    delete[] specificControlTargets;
+    specificControlTargets = nullptr;
+  }
+}
+
+PIDControlAlgorithm::~PIDControlAlgorithm() {
+  // specific control targets array cleanup
+  deleteTargets();
 }

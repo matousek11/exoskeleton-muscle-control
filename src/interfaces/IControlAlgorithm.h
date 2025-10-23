@@ -1,6 +1,7 @@
 #ifndef ICONTROLALGORITHM_H_
 #define ICONTROLALGORITHM_H_
 
+#include "./../models/ControlTarget.h"
 #include "./../models/Gyroscope.h"
 #include "./../models/Muscle.h"
 
@@ -16,7 +17,8 @@ class IControlAlgorithm {
    *
    * @param controlTime that control algorithm has before it gives control back to caller of the method.
    */
-  virtual void controlMuscle(Muscle* muscle, Gyroscope* gyroscope, int controlTime) = 0;
+  virtual void controlMuscle(Muscle* muscle, Gyroscope* gyroscope, int controlTime, ControlTarget targets[],
+                             size_t count) = 0;
 };
 
 #endif
