@@ -33,39 +33,38 @@ void Gyroscope::initialize() {
 }
 
 void Gyroscope::updateValues() {
-  float accelerometerWeight = 0.06;
-  float gyroscopeWeight = 0.94;
+  static unsigned long lastTime = 0;
+  unsigned long now = millis();
 
-  this->timer = millis();
+  // calculate time difference
+  float dt = (lastTime == 0) ? 0.01f : (now - lastTime) / 1000.0f;
+  lastTime = now;
+
+  const float accelerometerWeight = 0.1f;
+  const float gyroscopeWeight = 0.90f;
+
   int16_t ax, ay, az, gx, gy, gz;
-
   mpu->getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
   // convert from raw data to g and deg/s
-  float accelerometerX = ax / 16384.0;  // g
-  float accelerometerY = ay / 16384.0;  // g
-  float accelerometerZ = az / 16384.0;  // g
-  float gyroscopeX = gx / 131.0;        // deg/s
-  float gyroscopeY = gy / 131.0;        // deg/s
-  float gyroscopeZ = gz / 131.0;        // deg/s
+  float accelerometerX = ax / 16384.0f;
+  float accelerometerY = ay / 16384.0f;
+  float accelerometerZ = az / 16384.0f;
+  float gyroscopeX = gx / 131.0f;
+  float gyroscopeY = gy / 131.0f;
+  float gyroscopeZ = gz / 131.0f;
 
   // angle from accelerometer (axis X)
-  float accAngleX = atan2(accelerometerY, accelerometerZ) * 180.0 / PI;
+  float accAngleX = atan2(accelerometerY, accelerometerZ) * 180.0f / PI;
   float accAngleY =
-      atan2(-accelerometerX, sqrt(accelerometerY * accelerometerY + accelerometerZ * accelerometerZ)) * 180.0 / PI;
+      atan2(-accelerometerX, sqrt(accelerometerY * accelerometerY + accelerometerZ * accelerometerZ)) * 180.0f / PI;
   float accAngleZ =
-      atan2(sqrt(accelerometerX * accelerometerX + accelerometerY * accelerometerY), accelerometerZ) * 180.0 / PI;
+      atan2(sqrt(accelerometerX * accelerometerX + accelerometerY * accelerometerY), accelerometerZ) * 180.0f / PI;
 
   // complementary filters for sensor data fusion
-  angleX = gyroscopeWeight * (angleX + gyroscopeX * timeStep) + accelerometerWeight * accAngleX;
-  angleY = gyroscopeWeight * (angleY + gyroscopeY * timeStep) + accelerometerWeight * accAngleY;
-  angleZ = gyroscopeWeight * (angleZ + gyroscopeZ * timeStep) + accelerometerWeight * accAngleZ;
-
-  // Time to wait before next measurement
-  unsigned long loopTime = millis() - timer;
-  if (loopTime < timeStep * 1000) {
-    delay((timeStep * 1000) - loopTime);
-  }
+  angleX = gyroscopeWeight * (angleX + gyroscopeX * dt) + accelerometerWeight * accAngleX;
+  angleY = gyroscopeWeight * (angleY + gyroscopeY * dt) + accelerometerWeight * accAngleY;
+  angleZ = gyroscopeWeight * (angleZ + gyroscopeZ * dt) + accelerometerWeight * accAngleZ;
 }
 
 void Gyroscope::printValues() {

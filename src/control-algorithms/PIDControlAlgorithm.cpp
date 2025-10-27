@@ -53,7 +53,7 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
     float deltaTime = (now - previousTime) / 1000.0f;  // seconds
 
     // --- Read current angle ---
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 30; i++) {
       gyroscope->updateValues();
     }
     float currentAngle = gyroscope->getXAngle();
