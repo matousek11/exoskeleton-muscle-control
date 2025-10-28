@@ -43,6 +43,18 @@ class Muscle {
    * @param pressureTime For how long pressure should be released in miliseconds.
    */
   void releasePressure(int pressureTime = 50);
+
+  /**
+   * Add pressure from muscle for specified time but in more than one openings so transition is more fluid.
+   * @param pressureTime For how long pressure should be added in miliseconds.
+   */
+  void addPressureFluidly(int pressureTime = 50);
+
+  /**
+   * Release pressure from muscle for specified time but in more than one openings so transition is more fluid.
+   * @param pressureTime For how long pressure should be released in miliseconds.
+   */
+  void releasePressureFluidly(int pressureTime = 50);
   void openInput();
   void closeInput();
   void openOutput();

@@ -44,6 +44,14 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyr
       Serial.println(muscle->getStatus());
     } else if (command.equalsIgnoreCase("test")) {
       muscle->test();
+    } else if (command.equalsIgnoreCase("dg2")) {
+      Serial.println("Show gyroscope output for 2 seconds");
+      unsigned long startTime = millis();
+
+      while (millis() - startTime < 2000) {
+        gyroscope->updateValues();
+        gyroscope->printValues();
+      }
     } else if (command.equalsIgnoreCase("dg10")) {
       Serial.println("Show gyroscope output for 10 seconds");
       unsigned long startTime = millis();
@@ -70,9 +78,9 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyr
       ControlTarget targets[1] = {ControlTarget(0.0f, 70.0f)};
       controlAlgorithm->controlMuscle(muscle, gyroscope, 20000, targets, 1);
     } else if (command.equalsIgnoreCase("t-dyn")) {
-      Serial.println("target 70 and then 30 degrees");
-      ControlTarget targets[2] = {ControlTarget(0.0f, 70.0f), ControlTarget(0.5f, 30.0f)};
-      controlAlgorithm->controlMuscle(muscle, gyroscope, 20000, targets, 2);
+      Serial.println("target 70, 30, 70 and then 60 degrees");
+      ControlTarget targets[4] = {ControlTarget(0.0f, 70.0f), ControlTarget(0.3f, 30.0f), ControlTarget(0.6f, 70.0f), ControlTarget(0.8f, 60.0f)};
+      controlAlgorithm->controlMuscle(muscle, gyroscope, 25000, targets, 4);
     } else if (command.equalsIgnoreCase("i2c")) {
       Debugger::scanI2C();
     } else {
@@ -103,7 +111,7 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "input valve, 'oo' - "
       "open output valve, 'oc' - close output valve");
   Serial.println(
-      "Commands for gyroscope (MPU6050): 'dg10/dg60' - show gyroscope output for 10s/60s, 'ia' - init axis (first run "
+      "Commands for gyroscope (MPU6050): 'dg2/dg10/dg60' - show gyroscope output for 2s/10s/60s, 'ia' - init axis (first run "
       "dg10)");
   Serial.println(
       "Commands for feedback loop algorithms: 't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees");

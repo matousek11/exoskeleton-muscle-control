@@ -23,8 +23,8 @@ void Muscle::retract() {
 }
 
 void Muscle::addPressure(int pressureTime) {
-  if (pressureTime < 10) {
-    pressureTime = 10;
+  if (pressureTime < 25) {
+    pressureTime = 25;
   }
 
   outputValve->close();
@@ -35,8 +35,8 @@ void Muscle::addPressure(int pressureTime) {
 }
 
 void Muscle::releasePressure(int pressureTime) {
-  if (pressureTime < 10) {
-    pressureTime = 10;
+  if (pressureTime < 25) {
+    pressureTime = 25;
   }
 
   inputValve->close();
@@ -44,6 +44,44 @@ void Muscle::releasePressure(int pressureTime) {
   outputValve->open();
   delay(pressureTime);
   outputValve->close();
+}
+
+void Muscle::addPressureFluidly(int pressureTime) {
+  int muscleSealingTime = 10;
+  int openTime = 25;
+  if (pressureTime < openTime) {
+    pressureTime = openTime;
+  }
+
+  int numberOfOpenings = pressureTime / openTime;
+
+  outputValve->close();
+  delay(muscleSealingTime);
+  for (int i = 0; i < numberOfOpenings; i++) {
+    inputValve->open();
+    delay(openTime);
+    inputValve->close();
+    delay(muscleSealingTime);
+  }
+}
+
+void Muscle::releasePressureFluidly(int pressureTime) {
+  int muscleSealingTime = 10;
+  int openTime = 25;
+  if (pressureTime < openTime) {
+    pressureTime = openTime;
+  }
+
+  int numberOfOpenings = pressureTime / openTime;
+
+  inputValve->close();
+  delay(muscleSealingTime);
+  for (int i = 0; i < numberOfOpenings; i++) {
+    outputValve->open();
+    delay(openTime);
+    outputValve->close();
+    delay(muscleSealingTime);
+  }
 }
 
 void Muscle::openInput() {

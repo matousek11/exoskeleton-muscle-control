@@ -10,11 +10,11 @@ PIDControlAlgorithm::PIDControlAlgorithm() {
 void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, int controlTime, ControlTarget targets[],
                                         size_t number_of_targets) {
   // --- PID tuning parameters ---
-  const float Kp = 0.5f;   // Proportional gain
-  const float Ki = 0.08f;  // Integral gain
-  const float Kd = 0.3f;   // Derivative gain
+  const float Kp = 0.4f;   // Proportional gain
+  const float Ki = 0.02f;  // Integral gain
+  const float Kd = 0.04f;   // Derivative gain
 
-  const float targetTolerance = 5;
+  const float targetTolerance = 4;
   const float valveOpenTimeClamp = 300;
 
   // --- Control setup ---
@@ -93,13 +93,13 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
             output = valveOpenTimeClamp;
           }
 
-          muscle->addPressure(abs(output));  // Increase angle
+          muscle->addPressureFluidly(abs(output));  // Increase angle
         } else if (abs(error) > targetTolerance && output < -targetTolerance) {
           if (abs(output) > valveOpenTimeClamp) {  // upper clamp
             output = -valveOpenTimeClamp;
           }
 
-          muscle->releasePressure(abs(output));  // Decrease angle
+          muscle->releasePressureFluidly(abs(output));  // Decrease angle
         } else {
           // Small correction area — hold position
           muscle->closeInput();
