@@ -26,7 +26,7 @@ void Gyroscope::initialize() {
 
   Serial.println("Aligning gyroscope angle with physical device...");
   unsigned long startTime = millis();
-  while (millis() - startTime < 4000) {
+  while (millis() - startTime < 5000) {
     updateValues();
   }
   Serial.println("Gyroscope aligned");

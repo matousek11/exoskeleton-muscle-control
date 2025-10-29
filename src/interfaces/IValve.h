@@ -14,10 +14,25 @@ class IValve {
  public:
   virtual ~IValve() {};
 
+  /**
+   * Physically opens valve
+   */
   virtual void open() = 0;
+
+  /**
+   * Physically closes valve
+   */
   virtual void close() = 0;
   virtual bool isOpen() const = 0;
+
+  /**
+   * Returns status of valve ready for printing.
+   */
   virtual String getStatus() const = 0;
+
+  /**
+   * Returns whether valve is inlet or outlet and is ready for printing.
+   */
   virtual String getType() const = 0;
   virtual int getValvePin() const = 0;
 };

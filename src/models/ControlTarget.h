@@ -28,6 +28,10 @@ class ControlTarget {
     }
   }
 
+  /**
+   * Returns SpecificControlTarget with time activation point based on normalized time and control algorithm running
+   * length.
+   */
   SpecificControlTarget* calculateSpecificControlTarget(float startTime, float controlTime) {
     float absoluteActivationPoint = startTime + (controlTime * getActivationPoint());
     return new SpecificControlTarget(absoluteActivationPoint, getTargetAngle());
