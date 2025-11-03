@@ -81,7 +81,11 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
         derivative = -clamp;
       }
 
-      proportionalPart = Kp * error;
+      if (targetXAngle < 40) {
+        proportionalPart = Kp * 0.5 * error;
+      } else {
+        proportionalPart = Kp * error;
+      }
       integralPart = Ki * integral;
       derivativePart = Kd * derivative;
       output = proportionalPart + integralPart + derivativePart;
