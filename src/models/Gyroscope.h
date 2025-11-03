@@ -51,11 +51,6 @@ class Gyroscope {
   float referenceAngleZ = 0;
 
   /**
-   * @brief Time between last and new measurement.
-   */
-  float timeStep = 0.003;
-
-  /**
    * Used to log time of start of measurement.
    */
   unsigned long timer;
