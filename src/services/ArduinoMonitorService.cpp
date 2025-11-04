@@ -3,11 +3,13 @@
 #include "./../control-algorithms/PIDControlAlgorithm.h"
 #include "./../helpers/Debugger.h"
 #include "./../interfaces/IControlAlgorithm.h"
+#include "./../models/Actuator.h"
 #include "./../models/Muscle.h"
 #include "Arduino.h"
 
 void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope,
-                                                  IControlAlgorithm* controlAlgorithm) {
+                                                  IControlAlgorithm* controlAlgorithm, Actuator* frontActuator,
+                                                  Actuator* backActuator) {
   bool unknownCommand = false;
 
   if (Serial.available()) {
@@ -79,10 +81,27 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyr
       controlAlgorithm->controlMuscle(muscle, gyroscope, 20000, targets, 1);
     } else if (command.equalsIgnoreCase("t-dyn")) {
       Serial.println("target 70, 30, 70 and then 60 degrees");
-      ControlTarget targets[4] = {ControlTarget(0.0f, 70.0f), ControlTarget(0.3f, 30.0f), ControlTarget(0.6f, 70.0f), ControlTarget(0.8f, 60.0f)};
+      ControlTarget targets[4] = {ControlTarget(0.0f, 70.0f), ControlTarget(0.3f, 30.0f), ControlTarget(0.6f, 70.0f),
+                                  ControlTarget(0.8f, 60.0f)};
       controlAlgorithm->controlMuscle(muscle, gyroscope, 25000, targets, 4);
     } else if (command.equalsIgnoreCase("i2c")) {
       Debugger::scanI2C();
+    } else if (command.equalsIgnoreCase("fe")) {
+      frontActuator->extend();
+    } else if (command.equalsIgnoreCase("fr")) {
+      frontActuator->retract();
+    } else if (command.equalsIgnoreCase("fplus")) {
+      frontActuator->addPressure();
+    } else if (command.equalsIgnoreCase("fminus")) {
+      frontActuator->releasePressure();
+    } else if (command.equalsIgnoreCase("be")) {
+      backActuator->extend();
+    } else if (command.equalsIgnoreCase("br")) {
+      backActuator->retract();
+    } else if (command.equalsIgnoreCase("bplus")) {
+      backActuator->addPressure();
+    } else if (command.equalsIgnoreCase("bminus")) {
+      backActuator->releasePressure();
     } else {
       unknownCommand = true;
     }
@@ -111,10 +130,17 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "input valve, 'oo' - "
       "open output valve, 'oc' - close output valve");
   Serial.println(
-      "Commands for gyroscope (MPU6050): 'dg2/dg10/dg60' - show gyroscope output for 2s/10s/60s, 'ia' - init axis (first run "
+      "Commands for gyroscope (MPU6050): 'dg2/dg10/dg60' - show gyroscope output for 2s/10s/60s, 'ia' - init axis "
+      "(first run "
       "dg10)");
   Serial.println(
       "Commands for feedback loop algorithms: 't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees");
+  Serial.println(
+      "Front actuator commands: 'fe' - front extend, 'fr' - front retract, 'fplus' - add pressure to front, 'fminus' - "
+      "remove pressure from front");
+  Serial.println(
+      "Back actuator commands: 'be' - back extend, 'br' - back retract, 'bplus' - add pressure to back, 'bminus' - "
+      "remove pressure from back");
   Serial.println("Debug tools: 'i2c' - I2C device scanner");
 }
 

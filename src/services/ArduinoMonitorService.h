@@ -2,6 +2,7 @@
 #define ARDUINOMONITORSERVICE_H_
 
 #include "./../interfaces/IControlAlgorithm.h"
+#include "./../models/Actuator.h"
 #include "./../models/Gyroscope.h"
 #include "./../models/Muscle.h"
 #include "Arduino.h"
@@ -30,7 +31,8 @@ class ArduinoMonitorService {
    * @param gyroscope gyroscope which would be controlled through monitor
    * @param controlAlgorithm algorithm used to control the system angle
    */
-  void controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope, IControlAlgorithm* controlAlgorithm);
+  void controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope, IControlAlgorithm* controlAlgorithm,
+                             Actuator* frontActuator, Actuator* backActuator);
 
   /**
    * @brief Prints help with commands for user into monitor.

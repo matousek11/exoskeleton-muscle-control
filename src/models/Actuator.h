@@ -1,36 +1,47 @@
-#ifndef IACTUATOR_H_
-#define IACTUATOR_H_
+#ifndef ACTUATOR_H_
+#define ACTUATOR_H_
 
-#define MAX_ACTUATORS 2
+#include "./../interfaces/IValve.h"
 
-#include "IValve.h"
-
-class IActuator {
+class Actuator {
  private:
   /**
-   * Actuators used for control.
+   * Inlet valves
    */
-  IValve* actuators[MAX_ACTUATORS];
+  IValve** inletValves;
 
   /**
    * Keeps track of how many actuators are in array
    */
-  size_t actuatorsCount = 0;
+  size_t inletValvesCount = 0;
+
+  /**
+   * Inlet valves
+   */
+  IValve** outletValves;
+
+  /**
+   * Keeps track of how many actuators are in array
+   */
+  size_t outletValvesCount = 0;
+
+  bool extended;
 
  public:
-  virtual ~IActuator() = default;
+  Actuator(IValve* inletValves[], size_t inletValvesCount, IValve* outletValves[], size_t outletValvesCount);
+
   /**
-   * Fully extend actuator.
+   * Fully release pressure from muscle.
    */
   void extend();
 
   /**
-   * Fully retract actuator.
+   * Pressurize muscle.
    */
   void retract();
 
   /**
-   * @param pressureTime For how long actuator should be added in miliseconds.
+   * @param pressureTime For how long pressure should be added in miliseconds.
    */
   void addPressure(int pressureTime = 50);
 
@@ -61,12 +72,12 @@ class IActuator {
   bool isExtended();
 
   /**
-   * Prints current settings of actuators.
+   * Prints current settings of muscle.
    */
   String getStatus();
 
   /**
-   * Test actuators by opening and closing them for several times.
+   * Test valves by opening and closing them for several times.
    */
   void test();
 };

@@ -3,6 +3,7 @@
 #include "Wire.h"
 #include "control-algorithms/PIDControlAlgorithm.h"
 #include "enums/ValveType.h"
+#include "models/Actuator.h"
 #include "models/Gyroscope.h"
 #include "models/Muscle.h"
 #include "models/Valve.h"
@@ -12,6 +13,8 @@
 const int availableValvePins[] = {4, 5, 6, 7, 10, 11, 12, 13};
 
 Muscle* leftMuscle;
+Actuator* frontActuator;
+Actuator* backActuator;
 ValveFactory* valveFactory;
 Gyroscope* gyroscope;
 IControlAlgorithm* controlAlgorithm;
@@ -29,9 +32,33 @@ void setup() {
   controlAlgorithm = new PIDControlAlgorithm();
   leftMuscle = new Muscle(valveFactory->createValve(4, ValveType::INLET, 0X60),
                           valveFactory->createValve(3, ValveType::OUTLET, 0X60));
+
+  IValve* frontInletValves[2];
+  IValve* frontOutletValves[2];
+
+  // Fill inlet valves
+  frontInletValves[0] = valveFactory->createValve(4, ValveType::INLET);
+  frontInletValves[1] = valveFactory->createValve(10, ValveType::INLET);
+
+  // Fill outlet valves
+  frontOutletValves[0] = valveFactory->createValve(5, ValveType::OUTLET);
+  frontOutletValves[1] = valveFactory->createValve(11, ValveType::OUTLET);
+  frontActuator = new Actuator(frontInletValves, 2, frontOutletValves, 2);
+
+  IValve* backInletValves[2];
+  IValve* backOutletValves[2];
+
+  // Fill inlet valves
+  backInletValves[0] = valveFactory->createValve(4, ValveType::INLET, 0x60);
+  backInletValves[1] = valveFactory->createValve(13, ValveType::INLET);
+
+  // Fill outlet valves
+  backOutletValves[0] = valveFactory->createValve(1, ValveType::OUTLET, 0x60);
+  backOutletValves[1] = valveFactory->createValve(3, ValveType::OUTLET, 0x60);
+  backActuator = new Actuator(backInletValves, 2, backInletValves, 2);
   arduinoMonitorService->printPossibleCommands(nullptr);
 }
 
 void loop() {
-  arduinoMonitorService->controlThroughMonitor(leftMuscle, gyroscope, controlAlgorithm);
+  arduinoMonitorService->controlThroughMonitor(leftMuscle, gyroscope, controlAlgorithm, frontActuator, backActuator);
 }
