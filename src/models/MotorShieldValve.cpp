@@ -14,7 +14,7 @@ MotorShieldValve::MotorShieldValve(int motorNumber, ValveType type, Adafruit_Mot
   }
   valve->setSpeed(255);
 
-  Serial.print(getType() + " initialiazed, motor number:" + this->controlPin + " on board with address: ");
+  Serial.print(getType() + " initialiazed, motor number:" + String(this->controlPin) + " on board with address: ");
   Serial.println(addrOfMotorShield, HEX);
 }
 
@@ -22,7 +22,8 @@ void MotorShieldValve::open() {
   valve->run(FORWARD);
   valveIsOpen = true;
 
-  Serial.print("PHYSICAL MOVEMENT: Opening " + getType() + ", motor: " + controlPin + " on board with address: ");
+  Serial.print("PHYSICAL MOVEMENT: Opening " + getType() + ", motor: " + String(controlPin) +
+               " on board with address: ");
   Serial.println(addrOfMotorShield, HEX);
 }
 
@@ -30,7 +31,8 @@ void MotorShieldValve::close() {
   valve->run(RELEASE);
   valveIsOpen = false;
 
-  Serial.print("PHYSICAL MOVEMENT: Closing " + getType() + ", motor: " + controlPin + " on board with address: ");
+  Serial.print("PHYSICAL MOVEMENT: Closing " + getType() + ", motor: " + String(controlPin) +
+               " on board with address: ");
   Serial.println(addrOfMotorShield, HEX);
 }
 
