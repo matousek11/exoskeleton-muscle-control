@@ -13,6 +13,11 @@ IValve* ValveFactory::createValve(int controlPin, ValveType valveType) {
 }
 
 IValve* ValveFactory::createValve(int controlPin, ValveType valveType, uint8_t addr) {
+  if (controlPin > 4) {
+    Serial.print("Motor shield pin cant be higher than 4.");
+    while (1);
+  }
+
   return new MotorShieldValve(controlPin, valveType, getShield(addr), addr);
 }
 

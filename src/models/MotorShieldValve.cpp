@@ -8,6 +8,10 @@ MotorShieldValve::MotorShieldValve(int motorNumber, ValveType type, Adafruit_Mot
   this->addrOfMotorShield = addrOfMotorShield;
 
   valve = motorShield->getMotor(motorNumber);
+  if (!valve) {
+    Serial.print("Failed to get motor.");
+    while (1);
+  }
   valve->setSpeed(255);
 
   Serial.print(getType() + " initialiazed, motor number:" + this->controlPin + " on board with address: ");

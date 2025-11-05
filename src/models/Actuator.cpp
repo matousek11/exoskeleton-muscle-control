@@ -16,7 +16,7 @@ Actuator::Actuator(IValve* inletValves[], size_t inletValvesCount, IValve* outle
     Serial.println(inletValves[i]->getValvePin());
   }
 
-  Serial.println("Actuator contains outlet valves:");
+  Serial.println("Actuator contains outlet valves on pins:");
   for (size_t i = 0; i < outletValvesCount; ++i) {
     Serial.println(outletValves[i]->getValvePin());
   }

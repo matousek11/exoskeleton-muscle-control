@@ -94,6 +94,8 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyr
       frontActuator->addPressure();
     } else if (command.equalsIgnoreCase("fminus")) {
       frontActuator->releasePressure();
+    } else if (command.equalsIgnoreCase("f-test")) {
+      frontActuator->test();
     } else if (command.equalsIgnoreCase("be")) {
       backActuator->extend();
     } else if (command.equalsIgnoreCase("br")) {
@@ -102,6 +104,8 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyr
       backActuator->addPressure();
     } else if (command.equalsIgnoreCase("bminus")) {
       backActuator->releasePressure();
+    } else if (command.equalsIgnoreCase("b-test")) {
+      backActuator->test();
     } else {
       unknownCommand = true;
     }
@@ -137,10 +141,10 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "Commands for feedback loop algorithms: 't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees");
   Serial.println(
       "Front actuator commands: 'fe' - front extend, 'fr' - front retract, 'fplus' - add pressure to front, 'fminus' - "
-      "remove pressure from front");
+      "remove pressure from front, 'f-test' - test run of front actuators");
   Serial.println(
       "Back actuator commands: 'be' - back extend, 'br' - back retract, 'bplus' - add pressure to back, 'bminus' - "
-      "remove pressure from back");
+      "remove pressure from back, 'b-test' - test run of back actuators");
   Serial.println("Debug tools: 'i2c' - I2C device scanner");
 }
 

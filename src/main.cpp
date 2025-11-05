@@ -33,29 +33,26 @@ void setup() {
   leftMuscle = new Muscle(valveFactory->createValve(4, ValveType::INLET, 0X60),
                           valveFactory->createValve(3, ValveType::OUTLET, 0X60));
 
-  IValve* frontInletValves[2];
-  IValve* frontOutletValves[2];
-
-  // Fill inlet valves
-  frontInletValves[0] = valveFactory->createValve(4, ValveType::INLET);
-  frontInletValves[1] = valveFactory->createValve(10, ValveType::INLET);
-
-  // Fill outlet valves
-  frontOutletValves[0] = valveFactory->createValve(5, ValveType::OUTLET);
-  frontOutletValves[1] = valveFactory->createValve(11, ValveType::OUTLET);
+  IValve* frontInletValves[] = {
+    valveFactory->createValve(4, ValveType::INLET),
+    valveFactory->createValve(10, ValveType::INLET)
+  };
+  IValve* frontOutletValves[] = {
+    valveFactory->createValve(5, ValveType::OUTLET),
+    valveFactory->createValve(11, ValveType::OUTLET)
+  };
   frontActuator = new Actuator(frontInletValves, 2, frontOutletValves, 2);
 
-  IValve* backInletValves[2];
-  IValve* backOutletValves[2];
+  IValve* backInletValves[] = {
+    valveFactory->createValve(4, ValveType::INLET, 0x60),
+    valveFactory->createValve(13, ValveType::INLET)
+  };
+  IValve* backOutletValves[] = {
+    valveFactory->createValve(1, ValveType::OUTLET, 0x60),
+    valveFactory->createValve(3, ValveType::OUTLET, 0x60)
+  };
 
-  // Fill inlet valves
-  backInletValves[0] = valveFactory->createValve(4, ValveType::INLET, 0x60);
-  backInletValves[1] = valveFactory->createValve(13, ValveType::INLET);
-
-  // Fill outlet valves
-  backOutletValves[0] = valveFactory->createValve(1, ValveType::OUTLET, 0x60);
-  backOutletValves[1] = valveFactory->createValve(3, ValveType::OUTLET, 0x60);
-  backActuator = new Actuator(backInletValves, 2, backInletValves, 2);
+  backActuator = new Actuator(backInletValves, 2, backOutletValves, 2);
   arduinoMonitorService->printPossibleCommands(nullptr);
 }
 
