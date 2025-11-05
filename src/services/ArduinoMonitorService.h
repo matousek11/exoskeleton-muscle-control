@@ -32,7 +32,7 @@ class ArduinoMonitorService {
    * @param controlAlgorithm algorithm used to control the system angle
    */
   void controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope, IControlAlgorithm* controlAlgorithm,
-                             Actuator* frontActuator, Actuator* backActuator);
+                             Actuator* frontActuator, Actuator* backActuator, Actuator* leftActuator, Actuator* rightActuator);
 
   /**
    * @brief Prints help with commands for user into monitor.

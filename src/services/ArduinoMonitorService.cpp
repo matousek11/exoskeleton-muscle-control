@@ -9,7 +9,7 @@
 
 void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope,
                                                   IControlAlgorithm* controlAlgorithm, Actuator* frontActuator,
-                                                  Actuator* backActuator) {
+                                                  Actuator* backActuator, Actuator* leftActuator, Actuator* rightActuator) {
   bool unknownCommand = false;
 
   if (Serial.available()) {
@@ -90,9 +90,9 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyr
       frontActuator->extend();
     } else if (command.equalsIgnoreCase("fr")) {
       frontActuator->retract();
-    } else if (command.equalsIgnoreCase("fplus")) {
+    } else if (command.equalsIgnoreCase("f+")) {
       frontActuator->addPressure();
-    } else if (command.equalsIgnoreCase("fminus")) {
+    } else if (command.equalsIgnoreCase("f-")) {
       frontActuator->releasePressure();
     } else if (command.equalsIgnoreCase("f-test")) {
       frontActuator->test();
@@ -100,12 +100,32 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyr
       backActuator->extend();
     } else if (command.equalsIgnoreCase("br")) {
       backActuator->retract();
-    } else if (command.equalsIgnoreCase("bplus")) {
+    } else if (command.equalsIgnoreCase("b+")) {
       backActuator->addPressure();
-    } else if (command.equalsIgnoreCase("bminus")) {
+    } else if (command.equalsIgnoreCase("b-")) {
       backActuator->releasePressure();
     } else if (command.equalsIgnoreCase("b-test")) {
       backActuator->test();
+    } else if (command.equalsIgnoreCase("le")) {
+      leftActuator->extend();
+    } else if (command.equalsIgnoreCase("lr")) {
+      leftActuator->retract();
+    } else if (command.equalsIgnoreCase("l+")) {
+      leftActuator->addPressure();
+    } else if (command.equalsIgnoreCase("l-")) {
+      leftActuator->releasePressure();
+    } else if (command.equalsIgnoreCase("l-test")) {
+      leftActuator->test();
+    } else if (command.equalsIgnoreCase("re")) {
+      rightActuator->extend();
+    } else if (command.equalsIgnoreCase("rr")) {
+      rightActuator->retract();
+    } else if (command.equalsIgnoreCase("r+")) {
+      rightActuator->addPressure();
+    } else if (command.equalsIgnoreCase("r-")) {
+      rightActuator->releasePressure();
+    } else if (command.equalsIgnoreCase("r-test")) {
+      rightActuator->test();
     } else {
       unknownCommand = true;
     }
@@ -140,11 +160,17 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
   Serial.println(
       "Commands for feedback loop algorithms: 't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees");
   Serial.println(
-      "Front actuator commands: 'fe' - front extend, 'fr' - front retract, 'fplus' - add pressure to front, 'fminus' - "
+      "Front actuator commands: 'fe' - front extend, 'fr' - front retract, 'f+' - add pressure to front, 'f-' - "
       "remove pressure from front, 'f-test' - test run of front actuators");
   Serial.println(
-      "Back actuator commands: 'be' - back extend, 'br' - back retract, 'bplus' - add pressure to back, 'bminus' - "
+      "Back actuator commands: 'be' - back extend, 'br' - back retract, 'b+' - add pressure to back, 'b-' - "
       "remove pressure from back, 'b-test' - test run of back actuators");
+  Serial.println(
+      "Back actuator commands: 'le' - left extend, 'lr' - left retract, 'l+' - add pressure to left, 'l-' - "
+      "remove pressure from left, 'l-test' - test run of left actuators");
+  Serial.println(
+      "Right actuator commands: 're' - right extend, 'rr' - right retract, 'r+' - add pressure to right, 'r-' - "
+      "remove pressure from right, 'r-test' - test run of right actuators");
   Serial.println("Debug tools: 'i2c' - I2C device scanner");
 }
 
