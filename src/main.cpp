@@ -1,6 +1,7 @@
 #include "Adafruit_MotorShield.h"
 #include "Arduino.h"
 #include "Wire.h"
+#include "control-algorithms/AntagonisticPIDControlAlgorithm.h"
 #include "control-algorithms/PIDControlAlgorithm.h"
 #include "enums/ValveType.h"
 #include "models/Actuator.h"
@@ -20,6 +21,7 @@ Actuator* backActuator;
 ValveFactory* valveFactory;
 Gyroscope* gyroscope;
 IControlAlgorithm* controlAlgorithm;
+AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm;
 ArduinoMonitorService* arduinoMonitorService;
 
 static IValve* frontInletValves[2];
@@ -41,6 +43,7 @@ void setup() {
 
   gyroscope = new Gyroscope(0x68);
   controlAlgorithm = new PIDControlAlgorithm();
+  antagonisticControlAlgorithm = new AntagonisticPIDControlAlgorithm();
   leftMuscle = new Muscle(valveFactory->createValve(4, ValveType::INLET, 0X60),
                           valveFactory->createValve(3, ValveType::OUTLET, 0X60));
 
@@ -72,5 +75,6 @@ void setup() {
 }
 
 void loop() {
-  arduinoMonitorService->controlThroughMonitor(leftMuscle, gyroscope, controlAlgorithm, frontActuator, backActuator, leftActuator, rightActuator);
+  arduinoMonitorService->controlThroughMonitor(leftMuscle, gyroscope, controlAlgorithm, antagonisticControlAlgorithm,
+                                               frontActuator, backActuator, leftActuator, rightActuator);
 }

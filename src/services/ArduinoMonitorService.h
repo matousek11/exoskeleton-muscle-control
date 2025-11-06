@@ -1,6 +1,7 @@
 #ifndef ARDUINOMONITORSERVICE_H_
 #define ARDUINOMONITORSERVICE_H_
 
+#include "./../control-algorithms/AntagonisticPIDControlAlgorithm.h"
 #include "./../interfaces/IControlAlgorithm.h"
 #include "./../models/Actuator.h"
 #include "./../models/Gyroscope.h"
@@ -32,7 +33,8 @@ class ArduinoMonitorService {
    * @param controlAlgorithm algorithm used to control the system angle
    */
   void controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope, IControlAlgorithm* controlAlgorithm,
-                             Actuator* frontActuator, Actuator* backActuator, Actuator* leftActuator, Actuator* rightActuator);
+                             AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm, Actuator* frontActuator,
+                             Actuator* backActuator, Actuator* leftActuator, Actuator* rightActuator);
 
   /**
    * @brief Prints help with commands for user into monitor.

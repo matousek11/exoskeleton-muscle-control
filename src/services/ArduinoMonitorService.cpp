@@ -8,8 +8,10 @@
 #include "Arduino.h"
 
 void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope,
-                                                  IControlAlgorithm* controlAlgorithm, Actuator* frontActuator,
-                                                  Actuator* backActuator, Actuator* leftActuator, Actuator* rightActuator) {
+                                                  IControlAlgorithm* controlAlgorithm,
+                                                  AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm,
+                                                  Actuator* frontActuator, Actuator* backActuator,
+                                                  Actuator* leftActuator, Actuator* rightActuator) {
   bool unknownCommand = false;
 
   if (Serial.available()) {
@@ -84,6 +86,10 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyr
       ControlTarget targets[4] = {ControlTarget(0.0f, 70.0f), ControlTarget(0.3f, 30.0f), ControlTarget(0.6f, 70.0f),
                                   ControlTarget(0.8f, 60.0f)};
       controlAlgorithm->controlMuscle(muscle, gyroscope, 25000, targets, 4);
+    } else if (command.equalsIgnoreCase("t-ant-dyn")) {
+      Serial.println("target -20 and 0 degrees");
+      ControlTarget targets[2] = {ControlTarget(0.0f, -20.0f), ControlTarget(0.5f, 0.0f)};
+      antagonisticControlAlgorithm->controlMuscle(frontActuator, backActuator, gyroscope, 20000, targets, 2);
     } else if (command.equalsIgnoreCase("i2c")) {
       Debugger::scanI2C();
     } else if (command.equalsIgnoreCase("fe")) {
