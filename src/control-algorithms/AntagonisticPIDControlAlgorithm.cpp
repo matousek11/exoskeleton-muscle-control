@@ -83,11 +83,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
         derivative = -clamp;
       }
 
-      if (targetYAngle < 40) {
-        proportionalPart = Kp * 0.5 * error;
-      } else {
         proportionalPart = Kp * error;
-      }
       integralPart = Ki * integral;
       derivativePart = Kd * derivative;
       output = proportionalPart + integralPart + derivativePart;
@@ -102,7 +98,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
 
           // Increase angle (move forward)
           forwardActuator->addPressureFluidly(abs(output));
-          backwardActuator->releasePressureFluidly(abs(output));
+          backwardActuator->releasePressureFluidly((abs(output) * 1.1));
         } else if (abs(error) > targetTolerance && output < 0) {
           // move backward
           if (abs(output) > valveOpenTimeClamp) {  // upper clamp
@@ -110,7 +106,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
           }
 
           // Decrease angle (move backward)
-          forwardActuator->releasePressureFluidly(abs(output));
+          forwardActuator->releasePressureFluidly((abs(output) * 1.1));
           backwardActuator->addPressureFluidly(abs(output));
         } else {
           // Small correction area — hold position

@@ -47,28 +47,28 @@ void setup() {
   leftMuscle = new Muscle(valveFactory->createValve(4, ValveType::INLET, 0X60),
                           valveFactory->createValve(3, ValveType::OUTLET, 0X60));
 
-  frontInletValves[0] = valveFactory->createValve(4, ValveType::INLET);
-  frontInletValves[1] = valveFactory->createValve(10, ValveType::INLET);
-  frontOutletValves[0] = valveFactory->createValve(7, ValveType::OUTLET);
-  frontOutletValves[1] = valveFactory->createValve(6, ValveType::OUTLET);
+  frontInletValves[0] = valveFactory->createValve(4, ValveType::INLET, 0x60);
+  frontInletValves[1] = valveFactory->createValve(13, ValveType::INLET);
+  frontOutletValves[0] = valveFactory->createValve(1, ValveType::OUTLET, 0x60);
+  frontOutletValves[1] = valveFactory->createValve(3, ValveType::OUTLET, 0x60);
   frontActuator = new Actuator(frontInletValves, 2, frontOutletValves, 2);
 
-  leftInletValves[0] = valveFactory->createValve(4, ValveType::INLET);
-  leftInletValves[1] = valveFactory->createValve(4, ValveType::INLET, 0X60);
+  leftInletValves[0] = valveFactory->createValve(13, ValveType::INLET);
+  leftInletValves[1] = valveFactory->createValve(4, ValveType::INLET);
   leftOutletValves[0] = valveFactory->createValve(6, ValveType::OUTLET);
-  leftOutletValves[1] = valveFactory->createValve(3, ValveType::OUTLET, 0X60);
+  leftOutletValves[1] = valveFactory->createValve(1, ValveType::OUTLET, 0X60);
   leftActuator = new Actuator(leftInletValves, 2, leftOutletValves, 2);
 
   rightInletValves[0] = valveFactory->createValve(10, ValveType::INLET);
-  rightInletValves[1] = valveFactory->createValve(13, ValveType::INLET);
+  rightInletValves[1] = valveFactory->createValve(4, ValveType::INLET, 0x60);
   rightOutletValves[0] = valveFactory->createValve(7, ValveType::OUTLET);
-  rightOutletValves[1] = valveFactory->createValve(1, ValveType::OUTLET, 0X60);
+  rightOutletValves[1] = valveFactory->createValve(3, ValveType::OUTLET, 0X60);
   rightActuator = new Actuator(rightInletValves, 2, rightOutletValves, 2);
 
-  backInletValves[0] = valveFactory->createValve(4, ValveType::INLET, 0x60);
-  backInletValves[1] = valveFactory->createValve(13, ValveType::INLET);
-  backOutletValves[0] = valveFactory->createValve(1, ValveType::OUTLET, 0x60);
-  backOutletValves[1] = valveFactory->createValve(3, ValveType::OUTLET, 0x60);
+  backInletValves[0] = valveFactory->createValve(4, ValveType::INLET);
+  backInletValves[1] = valveFactory->createValve(10, ValveType::INLET);
+  backOutletValves[0] = valveFactory->createValve(7, ValveType::OUTLET);
+  backOutletValves[1] = valveFactory->createValve(6, ValveType::OUTLET);
   backActuator = new Actuator(backInletValves, 2, backOutletValves, 2);
 
   arduinoMonitorService->printPossibleCommands(nullptr);

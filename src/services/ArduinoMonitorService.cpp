@@ -164,7 +164,7 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "(first run "
       "dg10)");
   Serial.println(
-      "Commands for feedback loop algorithms: 't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees");
+      "Commands for feedback loop algorithms: 't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees, 't-ant-dyn' - target -20 and then 0 degrees");
   Serial.println(
       "Front actuator commands: 'fe' - front extend, 'fr' - front retract, 'f+' - add pressure to front, 'f-' - "
       "remove pressure from front, 'f-test' - test run of front actuators");
