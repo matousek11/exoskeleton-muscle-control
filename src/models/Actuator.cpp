@@ -132,6 +132,86 @@ void Actuator::releasePressureFluidly(int pressureTime) {
   }
 }
 
+void Actuator::addPressureFluidlyWithOutflowValve(int pressureTime = 50) {
+  int muscleSealingTime = 5;
+  int openTime = 25;
+  int outputOpenTime = 0;
+  if (pressureTime < openTime) {
+    if (pressureTime < 5) {
+      outputOpenTime = openTime + 0.2 * pressureTime;
+    } else {
+      pressureTime += openTime;
+    }
+
+    // Transition to start state
+    closeOutput();
+    delay(muscleSealingTime);
+    openInput();
+    if (pressureTime < 5) {
+      openOutput();
+      delay(outputOpenTime);
+      closeOutput();
+    }
+    delay(pressureTime);
+    closeInput();
+
+    return;
+  }
+
+  int numberOfOpenings = pressureTime / openTime;
+
+  // Transition to start state
+  closeOutput();
+  delay(muscleSealingTime);
+  for (int i = 0; i < numberOfOpenings; i++) {
+    openInput();
+    delay(openTime);
+    closeInput();
+    delay(muscleSealingTime);
+  }
+}
+
+void Actuator::releasePressureFluidlyWithInputValve(int pressureTime = 50) {
+  int muscleSealingTime = 5;
+  int openTime = 25;
+  int inputOpenTime = 0;
+  if (pressureTime < openTime) {
+    if (pressureTime < 5) {
+      inputOpenTime = openTime + 0.2 * pressureTime;
+    } else {
+      pressureTime += openTime;
+    }
+    
+
+    // Transition to start state
+    closeInput();
+    delay(muscleSealingTime);
+    openOutput();
+    if (pressureTime < 5) {
+      openInput();
+      delay(inputOpenTime);
+      closeInput();
+    }
+    delay(pressureTime);
+    closeOutput();
+
+    return;
+  }
+
+  int numberOfOpeningsForOutput = pressureTime / openTime;
+
+  // Transition to start state
+  closeInput();
+  delay(muscleSealingTime);
+
+  for (int i = 0; i < numberOfOpeningsForOutput; i++) {
+    openOutput();
+    delay(openTime);
+    closeOutput();
+    delay(muscleSealingTime);
+  }
+}
+
 void Actuator::openInput() {
   for (size_t i = 0; i < inletValvesCount; ++i) {
     inletValves[i]->open();

@@ -14,6 +14,8 @@
 const int availableValvePins[] = {4, 5, 6, 7, 10, 11, 12, 13};
 
 Muscle* leftMuscle;
+Actuator* topFrontActuator;
+Actuator* topBackActuator;
 Actuator* frontActuator;
 Actuator* leftActuator;
 Actuator* rightActuator;
@@ -23,6 +25,11 @@ Gyroscope* gyroscope;
 IControlAlgorithm* controlAlgorithm;
 AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm;
 ArduinoMonitorService* arduinoMonitorService;
+
+static IValve* topFrontInletValves[1];
+static IValve* topFrontOutletValves[1];
+static IValve* topBackInletValves[1];
+static IValve* topBackOutletValves[1];
 
 static IValve* frontInletValves[2];
 static IValve* frontOutletValves[2];
@@ -44,8 +51,16 @@ void setup() {
   gyroscope = new Gyroscope(0x68);
   controlAlgorithm = new PIDControlAlgorithm();
   antagonisticControlAlgorithm = new AntagonisticPIDControlAlgorithm();
-  leftMuscle = new Muscle(valveFactory->createValve(4, ValveType::INLET, 0X60),
-                          valveFactory->createValve(3, ValveType::OUTLET, 0X60));
+  leftMuscle = new Muscle(valveFactory->createValve(13, ValveType::INLET),
+                          valveFactory->createValve(1, ValveType::OUTLET, 0X60));
+
+  topFrontInletValves[0] = valveFactory->createValve(12, ValveType::INLET);
+  topFrontOutletValves[0] = valveFactory->createValve(3, ValveType::OUTLET, 0x61);
+  topFrontActuator = new Actuator(topFrontInletValves, 1, topFrontOutletValves, 1);
+
+  topBackInletValves[0] = valveFactory->createValve(11, ValveType::INLET);
+  topBackOutletValves[0] = valveFactory->createValve(4, ValveType::OUTLET, 0x61);
+  topBackActuator = new Actuator(topBackInletValves, 1, topBackOutletValves, 1);
 
   frontInletValves[0] = valveFactory->createValve(4, ValveType::INLET, 0x60);
   frontInletValves[1] = valveFactory->createValve(13, ValveType::INLET);
@@ -76,5 +91,5 @@ void setup() {
 
 void loop() {
   arduinoMonitorService->controlThroughMonitor(leftMuscle, gyroscope, controlAlgorithm, antagonisticControlAlgorithm,
-                                               frontActuator, backActuator, leftActuator, rightActuator);
+                                               frontActuator, backActuator, leftActuator, rightActuator, topFrontActuator, topBackActuator);
 }

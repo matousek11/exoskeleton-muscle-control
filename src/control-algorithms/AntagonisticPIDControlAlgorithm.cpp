@@ -11,9 +11,9 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
                                                     Gyroscope* gyroscope, int controlTime, ControlTarget targets[],
                                                     size_t number_of_targets) {
   // --- PID tuning parameters ---
-  const float Kp = 0.4f;   // Proportional gain
-  const float Ki = 0.02f;  // Integral gain
-  const float Kd = 0.04f;  // Derivative gain
+  const float Kp = 0.1f;   // Proportional gain
+  const float Ki = 0.24f;  // Integral gain
+  const float Kd = 0.005f;  // Derivative gain
 
   const float targetTolerance = 4;
   const float valveOpenTimeClamp = 300;
@@ -97,8 +97,8 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
           }
 
           // Increase angle (move forward)
-          forwardActuator->addPressureFluidly(abs(output));
-          backwardActuator->releasePressureFluidly((abs(output) * 1.1));
+          forwardActuator->addPressureFluidlyWithOutflowValve(abs(output));
+          backwardActuator->releasePressureFluidlyWithInputValve((abs(output) * 1.2));
         } else if (abs(error) > targetTolerance && output < 0) {
           // move backward
           if (abs(output) > valveOpenTimeClamp) {  // upper clamp
@@ -106,8 +106,8 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
           }
 
           // Decrease angle (move backward)
-          forwardActuator->releasePressureFluidly((abs(output) * 1.1));
-          backwardActuator->addPressureFluidly(abs(output));
+          forwardActuator->releasePressureFluidlyWithInputValve((abs(output) * 1.2));
+          backwardActuator->addPressureFluidlyWithOutflowValve(abs(output));
         } else {
           // Small correction area — hold position
           forwardActuator->closeInput();

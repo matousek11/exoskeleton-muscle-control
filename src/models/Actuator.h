@@ -61,6 +61,21 @@ class Actuator {
    * @param pressureTime For how long pressure should be released in miliseconds.
    */
   void releasePressureFluidly(int pressureTime = 50);
+
+  /**
+   * Add pressure from muscle for specified time but in more than one openings so transition is more fluid.
+   * Utilize also outflow valve to make transition more smooth.
+   * @param pressureTime For how long pressure should be added in miliseconds.
+   */
+  void addPressureFluidlyWithOutflowValve(int pressureTime = 50);
+
+  /**
+   * Release pressure from muscle for specified time but in more than one openings so transition is more fluid.
+   * Utilize also input valve to make transition more smooth.
+   * @param pressureTime For how long pressure should be released in miliseconds.
+   */
+  void releasePressureFluidlyWithInputValve(int pressureTime = 50);
+
   void openInput();
   void closeInput();
   void openOutput();

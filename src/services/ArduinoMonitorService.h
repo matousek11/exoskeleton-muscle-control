@@ -34,7 +34,8 @@ class ArduinoMonitorService {
    */
   void controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope, IControlAlgorithm* controlAlgorithm,
                              AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm, Actuator* frontActuator,
-                             Actuator* backActuator, Actuator* leftActuator, Actuator* rightActuator);
+                             Actuator* backActuator, Actuator* leftActuator, Actuator* rightActuator,
+                             Actuator* topFrontActuator, Actuator* topBackActuator);
 
   /**
    * @brief Prints help with commands for user into monitor.
