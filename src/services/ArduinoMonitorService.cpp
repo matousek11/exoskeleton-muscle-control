@@ -86,20 +86,76 @@ void ArduinoMonitorService::controlThroughMonitor(
       controlAlgorithm->controlMuscle(muscle, gyroscope, 20000, targets, 1);
     } else if (command.equalsIgnoreCase("t-dyn")) {
       Serial.println("target 70, 30, 70 and then 60 degrees");
-      ControlTarget targets[4] = {ControlTarget(0.0f, 70.0f, 0), ControlTarget(0.3f, 30.0f, 0),
-                                  ControlTarget(0.6f, 70.0f, 0), ControlTarget(0.8f, 60.0f, 0)};
+      ControlTarget targets[4] = {ControlTarget(0.0f, 70.0f, 90.0f), ControlTarget(0.3f, 30.0f, 90.0f),
+                                  ControlTarget(0.6f, 70.0f, 90.0f), ControlTarget(0.8f, 60.0f, 90.0f)};
       controlAlgorithm->controlMuscle(muscle, gyroscope, 25000, targets, 4);
     } else if (command.equalsIgnoreCase("t-ant-dyn")) {
       Serial.println("target -20, 0 degrees, 10 degrees and -10 degrees");
-      ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 0), ControlTarget(0.25f, 0.0f, 0),
-                                  ControlTarget(0.5f, 10.0f, 0), ControlTarget(0.75f, -20.0f, 0)};
+      ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 90.0f), ControlTarget(0.25f, 0.0f, 90.0f),
+                                  ControlTarget(0.5f, 10.0f, 90.0f), ControlTarget(0.75f, -20.0f, 90.0f)};
       antagonisticControlAlgorithm->controlMuscle(frontActuator, backActuator, gyroscope, 23000, targets, 4);
+
+      frontActuator->closeInput();
+      frontActuator->closeOutput();
+      leftActuator->closeInput();
+      leftActuator->closeOutput();
+      rightActuator->closeInput();
+      rightActuator->closeOutput();
+      backActuator->closeInput();
+      backActuator->closeOutput();
+
+      topFrontActuator->closeInput();
+      topFrontActuator->closeOutput();
+      topBackActuator->closeInput();
+      topBackActuator->closeOutput();
+
+      muscle->closeInput();
+      muscle->closeOutput();
     } else if (command.equalsIgnoreCase("t-ant-dyn-2-dof")) {
       Serial.println("target -20;0, 0;0 degrees, 10;0 degrees and -10;0 degrees");
-      ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 0), ControlTarget(0.25f, 0.0f, 0),
-                                  ControlTarget(0.5f, 10.0f, 0), ControlTarget(0.75f, -20.0f, 0)};
+      ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 90.0f), ControlTarget(0.25f, 0.0f, 90.0f),
+                                  ControlTarget(0.5f, 10.0f, 90.0f), ControlTarget(0.75f, -20.0f, 90.0f)};
       twoDOFAntagonisticControlAlgorithm->controlMuscle(frontActuator, backActuator, leftActuator, rightActuator,
                                                         gyroscope, 23000, targets, 4);
+
+      frontActuator->closeInput();
+      frontActuator->closeOutput();
+      leftActuator->closeInput();
+      leftActuator->closeOutput();
+      rightActuator->closeInput();
+      rightActuator->closeOutput();
+      backActuator->closeInput();
+      backActuator->closeOutput();
+
+      topFrontActuator->closeInput();
+      topFrontActuator->closeOutput();
+      topBackActuator->closeInput();
+      topBackActuator->closeOutput();
+
+      muscle->closeInput();
+      muscle->closeOutput();
+    } else if (command.equalsIgnoreCase("stabilize")) {
+      Serial.println("Centering test stand");
+      ControlTarget targets[1] = {ControlTarget(0.0f, 0.0f, 90.0f)};
+      twoDOFAntagonisticControlAlgorithm->controlMuscle(frontActuator, backActuator, leftActuator, rightActuator,
+                                                        gyroscope, 5000, targets, 1);
+
+      frontActuator->closeInput();
+      frontActuator->closeOutput();
+      leftActuator->closeInput();
+      leftActuator->closeOutput();
+      rightActuator->closeInput();
+      rightActuator->closeOutput();
+      backActuator->closeInput();
+      backActuator->closeOutput();
+
+      topFrontActuator->closeInput();
+      topFrontActuator->closeOutput();
+      topBackActuator->closeInput();
+      topBackActuator->closeOutput();
+
+      muscle->closeInput();
+      muscle->closeOutput();
     } else if (command.equalsIgnoreCase("i2c")) {
       Debugger::scanI2C();
     } else if (command.equalsIgnoreCase("fe")) {
@@ -211,8 +267,8 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "(first run "
       "dg10)");
   Serial.println(
-      "Commands for feedback loop algorithms: 't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees, "
-      "'t-ant-dyn-2-dof' - target -20, 0, 10 and -20 degrees, 't-ant-dyn-2-dof' - target -20;0, 0;0, 10;0 and -20;0 "
+      "Commands for feedback loop algorithms: 'stabilize' - put test stand into start position, 't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees, "
+      "'t-ant-dyn' - target -20, 0, 10 and -20 degrees, 't-ant-dyn-2-dof' - target -20;0, 0;0, 10;0 and -20;0 "
       "degrees");
   Serial.println(
       "Top front actuator commands: 'tfe' - top front extend, 'tfr' - top front retract, 'tf+' - add pressure to top "

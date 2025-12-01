@@ -47,6 +47,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
         Serial.println("--- Emergency stop ---");
         forwardActuator->extend();
         backwardActuator->extend();
+        delay(1500);
         break;
       }
     }
@@ -149,8 +150,6 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
     isFirstCycle = false;
   }
 
-  forwardActuator->extend();
-  backwardActuator->extend();
   deleteTargets();
 }
 

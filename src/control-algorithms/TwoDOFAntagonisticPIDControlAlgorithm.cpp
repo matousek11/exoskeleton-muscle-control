@@ -70,6 +70,7 @@ void TwoDOFAntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActua
         Serial.println("--- Emergency stop ---");
         forwardActuator->extend();
         backwardActuator->extend();
+        delay(1500);
         break;
       }
     }
@@ -256,8 +257,6 @@ void TwoDOFAntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActua
     isFirstLongitudinalCycle = false;
   }
 
-  forwardActuator->extend();
-  backwardActuator->extend();
   deleteTargets();
 }
 
