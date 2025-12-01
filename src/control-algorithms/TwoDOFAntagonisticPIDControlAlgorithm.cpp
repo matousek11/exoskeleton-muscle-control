@@ -12,7 +12,8 @@ void TwoDOFAntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActua
                                                           Gyroscope* gyroscope, int controlTime,
                                                           ControlTarget targets[], size_t number_of_targets) {
   // Common init vars
-  const float targetTolerance = 4;
+  const float lateralTargetTolerance = 4;
+  const float longitudinalTargetTolerance = 6;
   const float valveOpenTimeClamp = 300;
   const int loopDelay = 50;  // PID update every 50ms
   unsigned long startTime = millis();
@@ -88,7 +89,7 @@ void TwoDOFAntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActua
 
     // --- PID calculations ---
     float lateralAngleError = lateralTargetAngle - currentLateralAngle;
-    if (abs(lateralAngleError) > targetTolerance) {  // do not calculate when in target tolerance
+    if (abs(lateralAngleError) > lateralTargetTolerance) {  // do not calculate when in target tolerance
       lateralIntegral += lateralAngleError * lateralDeltaTime;
       int clamp = 300;
       if (lateralIntegral > clamp) {
@@ -116,7 +117,7 @@ void TwoDOFAntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActua
 
       if (!isFirstLateralCycle) {
         // --- Apply control ---
-        if (abs(lateralAngleError) > targetTolerance && lateralOutput > 0) {
+        if (abs(lateralAngleError) > lateralTargetTolerance && lateralOutput > 0) {
           // move forward
           if (lateralOutput > valveOpenTimeClamp) {  // upper clamp
             lateralOutput = valveOpenTimeClamp;
@@ -125,7 +126,7 @@ void TwoDOFAntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActua
           // Increase angle (move forward)
           forwardActuator->addPressureFluidlyWithOutflowValve(abs(lateralOutput));
           backwardActuator->releasePressureFluidlyWithInputValve((abs(lateralOutput) * 1.2));
-        } else if (abs(lateralAngleError) > targetTolerance && lateralOutput < 0) {
+        } else if (abs(lateralAngleError) > lateralTargetTolerance && lateralOutput < 0) {
           // move backward
           if (abs(lateralOutput) > valveOpenTimeClamp) {  // upper clamp
             lateralOutput = -valveOpenTimeClamp;
@@ -151,7 +152,7 @@ void TwoDOFAntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActua
 
     // --- PID calculations ---
     float longitudinalAngleError = longitudinalTargetAngle - currentLongitudinalAngle;
-    if (abs(longitudinalAngleError) > targetTolerance) {  // do not calculate when in target tolerance
+    if (abs(longitudinalAngleError) > longitudinalTargetTolerance) {  // do not calculate when in target tolerance
       longitudinalIntegral += longitudinalAngleError * longitudinalDeltaTime;
       int clamp = 300;
       if (longitudinalIntegral > clamp) {
@@ -180,7 +181,7 @@ void TwoDOFAntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActua
 
       if (!isFirstLongitudinalCycle) {
         // --- Apply control ---
-        if (abs(longitudinalAngleError) > targetTolerance && longitudinalOutput > 0) {
+        if (abs(longitudinalAngleError) > longitudinalTargetTolerance && longitudinalOutput > 0) {
           // move forward
           if (longitudinalOutput > valveOpenTimeClamp) {  // upper clamp
             longitudinalOutput = valveOpenTimeClamp;
@@ -189,7 +190,7 @@ void TwoDOFAntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActua
           // Increase angle (move forward)
           rightActuator->addPressureFluidlyWithOutflowValve(abs(longitudinalOutput));
           leftActuator->releasePressureFluidlyWithInputValve((abs(longitudinalOutput) * 1.2));
-        } else if (abs(longitudinalAngleError) > targetTolerance && longitudinalOutput < 0) {
+        } else if (abs(longitudinalAngleError) > longitudinalTargetTolerance && longitudinalOutput < 0) {
           // move backward
           if (abs(longitudinalOutput) > valveOpenTimeClamp) {  // upper clamp
             longitudinalOutput = -valveOpenTimeClamp;

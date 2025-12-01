@@ -181,7 +181,6 @@ void Actuator::releasePressureFluidlyWithInputValve(int pressureTime = 50) {
     } else {
       pressureTime += openTime;
     }
-    
 
     // Transition to start state
     closeInput();
