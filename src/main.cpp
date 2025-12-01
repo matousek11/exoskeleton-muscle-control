@@ -2,6 +2,7 @@
 #include "Arduino.h"
 #include "Wire.h"
 #include "control-algorithms/AntagonisticPIDControlAlgorithm.h"
+#include "control-algorithms/TwoDOFAntagonisticParticularMuscleControlAlgorithm.h"
 #include "control-algorithms/PIDControlAlgorithm.h"
 #include "enums/ValveType.h"
 #include "models/Actuator.h"
@@ -20,11 +21,16 @@ Actuator* frontActuator;
 Actuator* leftActuator;
 Actuator* rightActuator;
 Actuator* backActuator;
+Actuator* leftFrontActuator;
+Actuator* rightFrontActuator;
+Actuator* leftBackActuator;
+Actuator* rightBackActuator;
 ValveFactory* valveFactory;
 Gyroscope* gyroscope;
 IControlAlgorithm* controlAlgorithm;
 AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm;
 TwoDOFAntagonisticPIDControlAlgorithm* twoDOFAntagonisticControlAlgorithm;
+TwoDOFAntagonisticParticularMuscleControlAlgorithm* twoDOFAntagonisticParticularMuscleControlAlgorithm;
 ArduinoMonitorService* arduinoMonitorService;
 
 static IValve* topFrontInletValves[1];
@@ -41,6 +47,15 @@ static IValve* rightOutletValves[2];
 static IValve* backInletValves[2];
 static IValve* backOutletValves[2];
 
+static IValve* leftFrontInletValves[1];
+static IValve* leftFrontOutletValves[1];
+static IValve* rightFrontInletValves[1];
+static IValve* rightFrontOutletValves[1];
+static IValve* leftBackInletValves[1];
+static IValve* leftBackOutletValves[1];
+static IValve* rightBackInletValves[1];
+static IValve* rightBackOutletValves[1];
+
 void setup() {
   Serial.begin(115200);
   // needed for MPU6050 readings and I2C scanner
@@ -53,6 +68,7 @@ void setup() {
   controlAlgorithm = new PIDControlAlgorithm();
   antagonisticControlAlgorithm = new AntagonisticPIDControlAlgorithm();
   twoDOFAntagonisticControlAlgorithm = new TwoDOFAntagonisticPIDControlAlgorithm();
+  twoDOFAntagonisticParticularMuscleControlAlgorithm = new TwoDOFAntagonisticParticularMuscleControlAlgorithm();
   leftMuscle = new Muscle(valveFactory->createValve(13, ValveType::INLET),
                           valveFactory->createValve(1, ValveType::OUTLET, 0X60));
 
@@ -88,11 +104,30 @@ void setup() {
   backOutletValves[1] = valveFactory->createValve(6, ValveType::OUTLET);
   backActuator = new Actuator(backInletValves, 2, backOutletValves, 2);
 
+  // particular muscle init
+  leftFrontInletValves[0] = valveFactory->createValve(13, ValveType::INLET);
+  leftFrontOutletValves[0] = valveFactory->createValve(1, ValveType::OUTLET, 0x60);
+  leftFrontActuator = new Actuator(leftFrontInletValves, 1, leftFrontOutletValves, 1);
+
+  rightFrontInletValves[0] = valveFactory->createValve(4, ValveType::INLET, 0x60);
+  rightFrontOutletValves[0] = valveFactory->createValve(3, ValveType::OUTLET, 0x60);
+  rightFrontActuator = new Actuator(rightFrontInletValves, 1, rightFrontOutletValves, 1);
+
+  leftBackInletValves[0] = valveFactory->createValve(4, ValveType::INLET);
+  leftBackOutletValves[0] = valveFactory->createValve(6, ValveType::OUTLET);
+  leftBackActuator = new Actuator(leftBackInletValves, 1, leftBackOutletValves, 1);
+
+  rightBackInletValves[0] = valveFactory->createValve(10, ValveType::INLET);
+  rightBackOutletValves[0] = valveFactory->createValve(7, ValveType::OUTLET);
+  rightBackActuator = new Actuator(rightBackInletValves, 1, rightBackOutletValves, 1);
+
   arduinoMonitorService->printPossibleCommands(nullptr);
 }
 
 void loop() {
   arduinoMonitorService->controlThroughMonitor(leftMuscle, gyroscope, controlAlgorithm, antagonisticControlAlgorithm,
-                                               twoDOFAntagonisticControlAlgorithm, frontActuator, backActuator,
-                                               leftActuator, rightActuator, topFrontActuator, topBackActuator);
+                                               twoDOFAntagonisticControlAlgorithm, twoDOFAntagonisticParticularMuscleControlAlgorithm,
+                                               frontActuator, backActuator,
+                                               leftActuator, rightActuator, topFrontActuator, topBackActuator,
+                                              leftFrontActuator, rightFrontActuator, leftBackActuator, rightBackActuator);
 }

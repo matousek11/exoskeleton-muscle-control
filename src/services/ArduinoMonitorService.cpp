@@ -10,9 +10,11 @@
 void ArduinoMonitorService::controlThroughMonitor(
     Muscle* muscle, Gyroscope* gyroscope, IControlAlgorithm* controlAlgorithm,
     AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm,
-    TwoDOFAntagonisticPIDControlAlgorithm* twoDOFAntagonisticControlAlgorithm, Actuator* frontActuator,
+    TwoDOFAntagonisticPIDControlAlgorithm* twoDOFAntagonisticControlAlgorithm, TwoDOFAntagonisticParticularMuscleControlAlgorithm* twoDOFAntagonisticParticularMuscleControlAlgorithm,
+    Actuator* frontActuator,
     Actuator* backActuator, Actuator* leftActuator, Actuator* rightActuator, Actuator* topFrontActuator,
-    Actuator* topBackActuator) {
+    Actuator* topBackActuator,
+    Actuator* leftFrontActuator, Actuator* rightFrontActuator, Actuator* leftBackActuator, Actuator* rightBackActuator) {
   bool unknownCommand = false;
 
   if (Serial.available()) {
@@ -116,6 +118,29 @@ void ArduinoMonitorService::controlThroughMonitor(
       ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 90.0f), ControlTarget(0.25f, 0.0f, 90.0f),
                                   ControlTarget(0.5f, 10.0f, 90.0f), ControlTarget(0.75f, -20.0f, 90.0f)};
       twoDOFAntagonisticControlAlgorithm->controlMuscle(frontActuator, backActuator, leftActuator, rightActuator,
+                                                        gyroscope, 23000, targets, 4);
+
+      frontActuator->closeInput();
+      frontActuator->closeOutput();
+      leftActuator->closeInput();
+      leftActuator->closeOutput();
+      rightActuator->closeInput();
+      rightActuator->closeOutput();
+      backActuator->closeInput();
+      backActuator->closeOutput();
+
+      topFrontActuator->closeInput();
+      topFrontActuator->closeOutput();
+      topBackActuator->closeInput();
+      topBackActuator->closeOutput();
+
+      muscle->closeInput();
+      muscle->closeOutput();
+    } else if (command.equalsIgnoreCase("t-ant-dyn-2-dof-v2")) {
+      Serial.println("target -20;0, 0;0 degrees, 10;0 degrees and -10;0 degrees");
+      ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 90.0f), ControlTarget(0.25f, 0.0f, 90.0f),
+                                  ControlTarget(0.5f, 10.0f, 90.0f), ControlTarget(0.75f, -20.0f, 90.0f)};
+      twoDOFAntagonisticParticularMuscleControlAlgorithm->controlMuscle(leftFrontActuator, rightFrontActuator, leftBackActuator, rightBackActuator,
                                                         gyroscope, 23000, targets, 4);
 
       frontActuator->closeInput();
@@ -268,7 +293,7 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "dg10)");
   Serial.println(
       "Commands for feedback loop algorithms: 'stabilize' - put test stand into start position, 't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees, "
-      "'t-ant-dyn' - target -20, 0, 10 and -20 degrees, 't-ant-dyn-2-dof' - target -20;0, 0;0, 10;0 and -20;0 "
+      "'t-ant-dyn' - target -20, 0, 10 and -20 degrees, 't-ant-dyn-2-dof' - target -20;0, 0;0, 10;0 and -20;0, 't-ant-dyn-2-dof-v2' - target -20;0, 0;0, 10;0 and -20;0 with particular muscles"
       "degrees");
   Serial.println(
       "Top front actuator commands: 'tfe' - top front extend, 'tfr' - top front retract, 'tf+' - add pressure to top "

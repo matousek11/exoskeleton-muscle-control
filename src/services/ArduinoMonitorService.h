@@ -3,6 +3,7 @@
 
 #include "./../control-algorithms/AntagonisticPIDControlAlgorithm.h"
 #include "./../control-algorithms/TwoDOFAntagonisticPIDControlAlgorithm.h"
+#include "./../control-algorithms/TwoDOFAntagonisticParticularMuscleControlAlgorithm.h"
 #include "./../interfaces/IControlAlgorithm.h"
 #include "./../models/Actuator.h"
 #include "./../models/Gyroscope.h"
@@ -36,8 +37,10 @@ class ArduinoMonitorService {
   void controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope, IControlAlgorithm* controlAlgorithm,
                              AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm,
                              TwoDOFAntagonisticPIDControlAlgorithm* twoDOFAntagonisticControlAlgorithm,
+                             TwoDOFAntagonisticParticularMuscleControlAlgorithm* twoDOFAntagonisticParticularMuscleControlAlgorithm,
                              Actuator* frontActuator, Actuator* backActuator, Actuator* leftActuator,
-                             Actuator* rightActuator, Actuator* topFrontActuator, Actuator* topBackActuator);
+                             Actuator* rightActuator, Actuator* topFrontActuator, Actuator* topBackActuator,
+                             Actuator* leftFrontActuator, Actuator* rightFrontActuator, Actuator* leftBackActuator, Actuator* rightBackActuator);
 
   /**
    * @brief Prints help with commands for user into monitor.
