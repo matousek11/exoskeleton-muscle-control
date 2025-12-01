@@ -15,13 +15,20 @@ class ControlTarget {
   float activationPoint;
 
   /**
-   * Target angle the system tries to reach after activation.
+   * Lateral target angle that system tries to reach after activation.
    */
-  float targetAngle;
+  float lateralTargetAngle;
+
+  /**
+   * Longitudinal target angle that system tries to reach after activation.
+   */
+  float longitudinalTargetAngle;
 
  public:
-  explicit ControlTarget(float activationPoint, float targetAngle)
-      : activationPoint(activationPoint), targetAngle(targetAngle) {
+  explicit ControlTarget(float activationPoint, float lateralTargetAngle, float longitudinalTargetAngle)
+      : activationPoint(activationPoint)
+      , lateralTargetAngle(lateralTargetAngle)
+      , longitudinalTargetAngle(longitudinalTargetAngle) {
     if (activationPoint < 0.0f || activationPoint > 1.0f) {
       Serial.println("ERROR: activationPoint must be between 0 and 1");
       while (true);
@@ -34,15 +41,19 @@ class ControlTarget {
    */
   SpecificControlTarget* calculateSpecificControlTarget(float startTime, float controlTime) {
     float absoluteActivationPoint = startTime + (controlTime * getActivationPoint());
-    return new SpecificControlTarget(absoluteActivationPoint, getTargetAngle());
+    return new SpecificControlTarget(absoluteActivationPoint, getLateralTargetAngle(), getLongitudinalTargetAngle());
   }
 
   float getActivationPoint() const {
     return activationPoint;
   }
 
-  float getTargetAngle() const {
-    return targetAngle;
+  float getLateralTargetAngle() const {
+    return lateralTargetAngle;
+  }
+
+  float getLongitudinalTargetAngle() const {
+    return longitudinalTargetAngle;
   }
 };
 

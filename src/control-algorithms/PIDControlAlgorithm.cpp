@@ -4,7 +4,7 @@
 #include "./../models/SpecificControlTarget.h"
 
 PIDControlAlgorithm::PIDControlAlgorithm() {
-  Serial.println("Creatin PID control algorithm class");
+  Serial.println("Creating PID 1 DOF control algorithm class");
 }
 
 void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, int controlTime, ControlTarget targets[],
@@ -12,7 +12,7 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
   // --- PID tuning parameters ---
   const float Kp = 0.4f;   // Proportional gain
   const float Ki = 0.02f;  // Integral gain
-  const float Kd = 0.04f;   // Derivative gain
+  const float Kd = 0.04f;  // Derivative gain
 
   const float targetTolerance = 4;
   const float valveOpenTimeClamp = 300;
@@ -150,7 +150,7 @@ void PIDControlAlgorithm::controlMuscle(Muscle* muscle, Gyroscope* gyroscope, in
 float PIDControlAlgorithm::getTargetAngle() {
   for (size_t i = numberOfTargets; i-- > 0;) {
     if (specificControlTargets[i]->getActivationPointTime() <= millis()) {
-      return specificControlTargets[i]->getTargetAngle();
+      return specificControlTargets[i]->getLateralTargetAngle();
     }
   }
 

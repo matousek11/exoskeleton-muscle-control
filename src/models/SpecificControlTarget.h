@@ -4,7 +4,7 @@
 #include "Arduino.h"
 
 /**
- * Data class for setting up target angle of system that activates after absolute time point since start of algorithm.
+ * Data class for setting up target angles of system that activates after absolute time point since start of algorithm.
  * Should be recalculated from ControlTarget data class.
  */
 class SpecificControlTarget {
@@ -15,13 +15,20 @@ class SpecificControlTarget {
   float activationPointTime;
 
   /**
-   * Target angle the system tries to reach after activation.
+   * Lateral target angle that system tries to reach after activation point.
    */
-  float targetAngle;
+  float lateralTargetAngle;
+
+  /**
+   * Longitudal target angle that system tries to reach after activation point.
+   */
+  float longitudinalTargetAngle;
 
  public:
-  explicit SpecificControlTarget(float activationPointTime, float targetAngle)
-      : activationPointTime(activationPointTime), targetAngle(targetAngle) {
+  explicit SpecificControlTarget(float activationPointTime, float lateralTargetAngle, float longitudinalTargetAngle)
+      : activationPointTime(activationPointTime)
+      , lateralTargetAngle(lateralTargetAngle)
+      , longitudinalTargetAngle(longitudinalTargetAngle) {
     if (activationPointTime < 0.0f) {
       Serial.println("ERROR: activationPointTime must not be smaller than 0");
       while (true);
@@ -32,8 +39,12 @@ class SpecificControlTarget {
     return activationPointTime;
   }
 
-  float getTargetAngle() const {
-    return targetAngle;
+  float getLateralTargetAngle() const {
+    return lateralTargetAngle;
+  }
+
+  float getLongitudinalTargetAngle() const {
+    return longitudinalTargetAngle;
   }
 };
 

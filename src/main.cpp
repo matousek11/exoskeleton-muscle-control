@@ -24,6 +24,7 @@ ValveFactory* valveFactory;
 Gyroscope* gyroscope;
 IControlAlgorithm* controlAlgorithm;
 AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm;
+TwoDOFAntagonisticPIDControlAlgorithm* twoDOFAntagonisticControlAlgorithm;
 ArduinoMonitorService* arduinoMonitorService;
 
 static IValve* topFrontInletValves[1];
@@ -51,6 +52,7 @@ void setup() {
   gyroscope = new Gyroscope(0x68);
   controlAlgorithm = new PIDControlAlgorithm();
   antagonisticControlAlgorithm = new AntagonisticPIDControlAlgorithm();
+  twoDOFAntagonisticControlAlgorithm = new TwoDOFAntagonisticPIDControlAlgorithm();
   leftMuscle = new Muscle(valveFactory->createValve(13, ValveType::INLET),
                           valveFactory->createValve(1, ValveType::OUTLET, 0X60));
 
@@ -91,5 +93,6 @@ void setup() {
 
 void loop() {
   arduinoMonitorService->controlThroughMonitor(leftMuscle, gyroscope, controlAlgorithm, antagonisticControlAlgorithm,
-                                               frontActuator, backActuator, leftActuator, rightActuator, topFrontActuator, topBackActuator);
+                                               twoDOFAntagonisticControlAlgorithm, frontActuator, backActuator,
+                                               leftActuator, rightActuator, topFrontActuator, topBackActuator);
 }

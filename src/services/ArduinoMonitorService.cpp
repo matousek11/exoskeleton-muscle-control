@@ -7,12 +7,12 @@
 #include "./../models/Muscle.h"
 #include "Arduino.h"
 
-void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope,
-                                                  IControlAlgorithm* controlAlgorithm,
-                                                  AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm,
-                                                  Actuator* frontActuator, Actuator* backActuator,
-                                                  Actuator* leftActuator, Actuator* rightActuator,
-                                                  Actuator* topFrontActuator, Actuator* topBackActuator) {
+void ArduinoMonitorService::controlThroughMonitor(
+    Muscle* muscle, Gyroscope* gyroscope, IControlAlgorithm* controlAlgorithm,
+    AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm,
+    TwoDOFAntagonisticPIDControlAlgorithm* twoDOFAntagonisticControlAlgorithm, Actuator* frontActuator,
+    Actuator* backActuator, Actuator* leftActuator, Actuator* rightActuator, Actuator* topFrontActuator,
+    Actuator* topBackActuator) {
   bool unknownCommand = false;
 
   if (Serial.available()) {
@@ -82,17 +82,24 @@ void ArduinoMonitorService::controlThroughMonitor(Muscle* muscle, Gyroscope* gyr
       gyroscope->calibrateZAngle();
     } else if (command.equalsIgnoreCase("t70")) {
       Serial.println("target 70 degrees");
-      ControlTarget targets[1] = {ControlTarget(0.0f, 70.0f)};
+      ControlTarget targets[1] = {ControlTarget(0.0f, 70.0f, 0)};
       controlAlgorithm->controlMuscle(muscle, gyroscope, 20000, targets, 1);
     } else if (command.equalsIgnoreCase("t-dyn")) {
       Serial.println("target 70, 30, 70 and then 60 degrees");
-      ControlTarget targets[4] = {ControlTarget(0.0f, 70.0f), ControlTarget(0.3f, 30.0f), ControlTarget(0.6f, 70.0f),
-                                  ControlTarget(0.8f, 60.0f)};
+      ControlTarget targets[4] = {ControlTarget(0.0f, 70.0f, 0), ControlTarget(0.3f, 30.0f, 0),
+                                  ControlTarget(0.6f, 70.0f, 0), ControlTarget(0.8f, 60.0f, 0)};
       controlAlgorithm->controlMuscle(muscle, gyroscope, 25000, targets, 4);
     } else if (command.equalsIgnoreCase("t-ant-dyn")) {
       Serial.println("target -20, 0 degrees, 10 degrees and -10 degrees");
-      ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f), ControlTarget(0.25f, 0.0f), ControlTarget(0.5f, 10.0f), ControlTarget(0.75f, -20.0f)};
+      ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 0), ControlTarget(0.25f, 0.0f, 0),
+                                  ControlTarget(0.5f, 10.0f, 0), ControlTarget(0.75f, -20.0f, 0)};
       antagonisticControlAlgorithm->controlMuscle(frontActuator, backActuator, gyroscope, 23000, targets, 4);
+    } else if (command.equalsIgnoreCase("t-ant-dyn-2-dof")) {
+      Serial.println("target -20;0, 0;0 degrees, 10;0 degrees and -10;0 degrees");
+      ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 0), ControlTarget(0.25f, 0.0f, 0),
+                                  ControlTarget(0.5f, 10.0f, 0), ControlTarget(0.75f, -20.0f, 0)};
+      twoDOFAntagonisticControlAlgorithm->controlMuscle(frontActuator, backActuator, leftActuator, rightActuator,
+                                                        gyroscope, 23000, targets, 4);
     } else if (command.equalsIgnoreCase("i2c")) {
       Debugger::scanI2C();
     } else if (command.equalsIgnoreCase("fe")) {
@@ -204,12 +211,16 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "(first run "
       "dg10)");
   Serial.println(
-      "Commands for feedback loop algorithms: 't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees, 't-ant-dyn' - target -20, 0, 10 and -20 degrees");
+      "Commands for feedback loop algorithms: 't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees, "
+      "'t-ant-dyn-2-dof' - target -20, 0, 10 and -20 degrees, 't-ant-dyn-2-dof' - target -20;0, 0;0, 10;0 and -20;0 "
+      "degrees");
   Serial.println(
-      "Top front actuator commands: 'tfe' - top front extend, 'tfr' - top front retract, 'tf+' - add pressure to top front, 'tf-' - "
+      "Top front actuator commands: 'tfe' - top front extend, 'tfr' - top front retract, 'tf+' - add pressure to top "
+      "front, 'tf-' - "
       "remove pressure from top front, 'tf-test' - test run of top front actuators");
   Serial.println(
-      "Top back actuator commands: 'tbe' - top back extend, 'tbr' - top back retract, 'tb+' - add pressure to top back, 'tb-' - "
+      "Top back actuator commands: 'tbe' - top back extend, 'tbr' - top back retract, 'tb+' - add pressure to top "
+      "back, 'tb-' - "
       "remove pressure from top back, 'tb-test' - test run of top back actuators");
   Serial.println(
       "Front actuator commands: 'fe' - front extend, 'fr' - front retract, 'f+' - add pressure to front, 'f-' - "
@@ -223,8 +234,7 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
   Serial.println(
       "Right actuator commands: 're' - right extend, 'rr' - right retract, 'r+' - add pressure to right, 'r-' - "
       "remove pressure from right, 'r-test' - test run of right actuators");
-  Serial.println(
-      "All valves commands: 'close-all/c' - close all valves");
+  Serial.println("All valves commands: 'close-all/c' - close all valves");
   Serial.println("Debug tools: 'i2c' - I2C device scanner");
 }
 

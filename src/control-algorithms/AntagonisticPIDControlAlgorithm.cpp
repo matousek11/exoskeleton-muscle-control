@@ -4,15 +4,15 @@
 #include "./../models/SpecificControlTarget.h"
 
 AntagonisticPIDControlAlgorithm::AntagonisticPIDControlAlgorithm() {
-  Serial.println("Creatin PID control algorithm class");
+  Serial.println("Creating PID 1 DOF antagonistic control algorithm class");
 }
 
 void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, Actuator* backwardActuator,
                                                     Gyroscope* gyroscope, int controlTime, ControlTarget targets[],
                                                     size_t number_of_targets) {
   // --- PID tuning parameters ---
-  const float Kp = 0.1f;   // Proportional gain
-  const float Ki = 0.24f;  // Integral gain
+  const float Kp = 0.1f;    // Proportional gain
+  const float Ki = 0.24f;   // Integral gain
   const float Kd = 0.005f;  // Derivative gain
 
   const float targetTolerance = 4;
@@ -83,7 +83,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
         derivative = -clamp;
       }
 
-        proportionalPart = Kp * error;
+      proportionalPart = Kp * error;
       integralPart = Ki * integral;
       derivativePart = Kd * derivative;
       output = proportionalPart + integralPart + derivativePart;
@@ -157,7 +157,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
 float AntagonisticPIDControlAlgorithm::getTargetAngle() {
   for (size_t i = numberOfTargets; i-- > 0;) {
     if (specificControlTargets[i]->getActivationPointTime() <= millis()) {
-      return specificControlTargets[i]->getTargetAngle();
+      return specificControlTargets[i]->getLateralTargetAngle();
     }
   }
 
