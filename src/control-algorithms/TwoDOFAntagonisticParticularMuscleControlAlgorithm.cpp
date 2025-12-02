@@ -131,10 +131,9 @@ void TwoDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(Actuator*
           }
 
           // Increase angle (move forward)
-          //forwardActuator->addPressureFluidlyWithOutflowValve(abs(lateralOutput));
           leftFrontActuatorOutput += abs(lateralOutput);
           rightFrontActuatorOutput += abs(lateralOutput);
-          //backwardActuator->releasePressureFluidlyWithInputValve((abs(lateralOutput) * 1.2));
+
           leftBackActuatorOutput -= abs(lateralOutput) * 1.2;
           rightBackActuatorOutput -= abs(lateralOutput) * 1.2;
         } else if (abs(lateralAngleError) > lateralTargetTolerance && lateralOutput < 0) {
@@ -144,20 +143,12 @@ void TwoDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(Actuator*
           }
 
           // Decrease angle (move backward)
-          //forwardActuator->releasePressureFluidlyWithInputValve((abs(lateralOutput) * 1.2));
           leftFrontActuatorOutput -= abs(lateralOutput) * 1.2;
           rightFrontActuatorOutput -= abs(lateralOutput) * 1.2;
-          //backwardActuator->addPressureFluidlyWithOutflowValve(abs(lateralOutput));
+
           leftBackActuatorOutput += abs(lateralOutput);
           rightBackActuatorOutput += abs(lateralOutput);
-        } //else {
-        //   // Small correction area — hold position
-
-        //   leftFrontActuator->closeInput();
-        //   leftFrontActuatorOutput->closeOutput();
-        //   backwardActuator->closeInput();
-        //   backwardActuator->closeOutput();
-        // }
+        }
       }
     }
 
@@ -198,38 +189,42 @@ void TwoDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(Actuator*
       if (!isFirstLongitudinalCycle) {
         // --- Apply control ---
         if (abs(longitudinalAngleError) > longitudinalTargetTolerance && longitudinalOutput > 0) {
-          // move forward
+          // move right
           if (longitudinalOutput > valveOpenTimeClamp) {  // upper clamp
             longitudinalOutput = valveOpenTimeClamp;
           }
 
-          // Increase angle (move forward)
-          //rightActuator->addPressureFluidlyWithOutflowValve(abs(longitudinalOutput));
+          // Increase angle (move right)
           rightFrontActuatorOutput += abs(longitudinalOutput);
           rightBackActuatorOutput += abs(longitudinalOutput);
-          //leftActuator->releasePressureFluidlyWithInputValve((abs(longitudinalOutput) * 1.2));
-          leftFrontActuatorOutput -= abs(longitudinalOutput) * 1.2;
-          leftBackActuatorOutput -= abs(longitudinalOutput) * 1.2;
+          // counter changes for another axis
+          if (lateralAngleError > 5) {
+            leftFrontActuatorOutput += abs(longitudinalOutput) * 0.3;
+          } else if (lateralAngleError < 5) {
+            leftBackActuatorOutput += abs(longitudinalOutput) * 0.3;
+          }
+
+          leftFrontActuatorOutput -= abs(longitudinalOutput) * 1.1;
+          leftBackActuatorOutput -= abs(longitudinalOutput) * 1.1;
         } else if (abs(longitudinalAngleError) > longitudinalTargetTolerance && longitudinalOutput < 0) {
-          // move backward
+          // move left
           if (abs(longitudinalOutput) > valveOpenTimeClamp) {  // upper clamp
             longitudinalOutput = -valveOpenTimeClamp;
           }
 
-          // Decrease angle (move backward)
-          //rightActuator->releasePressureFluidlyWithInputValve((abs(longitudinalOutput) * 1.2));
+          // Decrease angle (move left)
           rightFrontActuatorOutput -= abs(longitudinalOutput) * 1.2;
           rightBackActuatorOutput -= abs(longitudinalOutput) * 1.2;
-          //leftActuator->addPressureFluidlyWithOutflowValve(abs(longitudinalOutput));
+          // counter changes for another axis
+          if (lateralAngleError > 5) {
+            rightFrontActuatorOutput += abs(longitudinalOutput) * 0.3;
+          } else if (lateralAngleError < 5) {
+            rightBackActuatorOutput += abs(longitudinalOutput) * 0.3;
+          }
+
           leftFrontActuatorOutput += abs(longitudinalOutput);
           leftBackActuatorOutput += abs(longitudinalOutput);
-        } //else {
-          // Small correction area — hold position
-        //   leftActuator->closeInput();
-        //   leftActuator->closeOutput();
-        //   rightActuator->closeInput();
-        //   rightActuator->closeOutput();
-        // }
+        }
       }
     }
 

@@ -137,11 +137,11 @@ void ArduinoMonitorService::controlThroughMonitor(
       muscle->closeInput();
       muscle->closeOutput();
     } else if (command.equalsIgnoreCase("t-ant-dyn-2-dof-v2")) {
-      Serial.println("target -20;0, 0;0 degrees, 10;0 degrees and -10;0 degrees");
-      ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 90.0f), ControlTarget(0.25f, 0.0f, 90.0f),
-                                  ControlTarget(0.5f, 10.0f, 90.0f), ControlTarget(0.75f, -20.0f, 90.0f)};
+      Serial.println("target -20;-10, 0;10 degrees, 10;-10 degrees and -10;0 degrees");
+      ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 80.0f), ControlTarget(0.25f, 0.0f, 100.0f),
+                                  ControlTarget(0.5f, 10.0f, 80.0f), ControlTarget(0.75f, -20.0f, 90.0f)};
       twoDOFAntagonisticParticularMuscleControlAlgorithm->controlMuscle(leftFrontActuator, rightFrontActuator, leftBackActuator, rightBackActuator,
-                                                        gyroscope, 23000, targets, 4);
+                                                        gyroscope, 50000, targets, 4);
 
       frontActuator->closeInput();
       frontActuator->closeOutput();
@@ -161,6 +161,10 @@ void ArduinoMonitorService::controlThroughMonitor(
       muscle->closeOutput();
     } else if (command.equalsIgnoreCase("stabilize")) {
       Serial.println("Centering test stand");
+      topFrontActuator->addPressureFluidlyWithOutflowValve();
+      topBackActuator->addPressureFluidlyWithOutflowValve();
+      topFrontActuator->addPressureFluidlyWithOutflowValve();
+      
       ControlTarget targets[1] = {ControlTarget(0.0f, 0.0f, 90.0f)};
       twoDOFAntagonisticControlAlgorithm->controlMuscle(frontActuator, backActuator, leftActuator, rightActuator,
                                                         gyroscope, 5000, targets, 1);
@@ -293,7 +297,7 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "dg10)");
   Serial.println(
       "Commands for feedback loop algorithms: 'stabilize' - put test stand into start position, 't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees, "
-      "'t-ant-dyn' - target -20, 0, 10 and -20 degrees, 't-ant-dyn-2-dof' - target -20;0, 0;0, 10;0 and -20;0, 't-ant-dyn-2-dof-v2' - target -20;0, 0;0, 10;0 and -20;0 with particular muscles"
+      "'t-ant-dyn' - target -20, 0, 10 and -20 degrees, 't-ant-dyn-2-dof' - target -20;0, 0;0, 10;0 and -20;0, 't-ant-dyn-2-dof-v2' - target -20;80, 0;100, 10;80 and -20;90 with particular muscles"
       "degrees");
   Serial.println(
       "Top front actuator commands: 'tfe' - top front extend, 'tfr' - top front retract, 'tf+' - add pressure to top "
