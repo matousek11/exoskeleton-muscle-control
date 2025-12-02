@@ -141,7 +141,7 @@ void ArduinoMonitorService::controlThroughMonitor(
       ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 80.0f), ControlTarget(0.25f, 0.0f, 100.0f),
                                   ControlTarget(0.5f, 10.0f, 80.0f), ControlTarget(0.75f, -20.0f, 90.0f)};
       twoDOFAntagonisticParticularMuscleControlAlgorithm->controlMuscle(leftFrontActuator, rightFrontActuator, leftBackActuator, rightBackActuator,
-                                                        gyroscope, 50000, targets, 4);
+                                                        gyroscope, 40000, targets, 4);
 
       frontActuator->closeInput();
       frontActuator->closeOutput();

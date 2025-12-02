@@ -19,7 +19,7 @@ class TwoDOFAntagonisticParticularMuscleControlAlgorithm {
    * Prepares specific control targets from relative control targets
    */
   void setSpecificControlTargets(ControlTarget targets[], size_t numberOfControlTargets, float startTime,
-                                 float controlTime);
+                                 unsigned long controlTime);
 
   /**
    * Looks into targets and return current active lateral target angle based on time since start of control algorithm.
@@ -50,7 +50,7 @@ class TwoDOFAntagonisticParticularMuscleControlAlgorithm {
    * @param number_of_targets number of angle targets in array
    */
   void controlMuscle(Actuator* leftFrontActuator, Actuator* rightFrontActuator, Actuator* leftBackActuator,
-                     Actuator* rightBackActuator, Gyroscope* gyroscope, int controlTime, ControlTarget targets[],
+                     Actuator* rightBackActuator, Gyroscope* gyroscope, unsigned long controlTime, ControlTarget targets[],
                      size_t number_of_targets);
 
   void deleteTargets();

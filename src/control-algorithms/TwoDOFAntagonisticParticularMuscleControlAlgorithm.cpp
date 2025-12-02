@@ -9,7 +9,7 @@ TwoDOFAntagonisticParticularMuscleControlAlgorithm::TwoDOFAntagonisticParticular
 
 void TwoDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(Actuator* leftFrontActuator, Actuator* rightFrontActuator,
                                                           Actuator* leftBackActuator, Actuator* rightBackActuator,
-                                                          Gyroscope* gyroscope, int controlTime,
+                                                          Gyroscope* gyroscope, unsigned long controlTime,
                                                           ControlTarget targets[], size_t number_of_targets) {
   // Common init vars
   const float lateralTargetTolerance = 4;
@@ -23,7 +23,7 @@ void TwoDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(Actuator*
   // ----- Lateral PID init -----
   // --- PID tuning parameters ---
   const float lateralKp = 0.1f;    // Proportional gain
-  const float lateralKi = 0.24f;   // Integral gain
+  const float lateralKi = 0.28f;   // Integral gain
   const float lateralKd = 0.005f;  // Derivative gain
 
   // --- Control setup ---
@@ -198,10 +198,10 @@ void TwoDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(Actuator*
           rightFrontActuatorOutput += abs(longitudinalOutput);
           rightBackActuatorOutput += abs(longitudinalOutput);
           // counter changes for another axis
-          if (lateralAngleError > 5) {
-            leftFrontActuatorOutput += abs(longitudinalOutput) * 0.3;
-          } else if (lateralAngleError < 5) {
-            leftBackActuatorOutput += abs(longitudinalOutput) * 0.3;
+          if (lateralAngleError > 0) {
+            leftFrontActuatorOutput += abs(longitudinalOutput) * 0.4;
+          } else if (lateralAngleError < -0) {
+            leftBackActuatorOutput += abs(longitudinalOutput) * 0.4;
           }
 
           leftFrontActuatorOutput -= abs(longitudinalOutput) * 1.1;
@@ -216,10 +216,10 @@ void TwoDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(Actuator*
           rightFrontActuatorOutput -= abs(longitudinalOutput) * 1.2;
           rightBackActuatorOutput -= abs(longitudinalOutput) * 1.2;
           // counter changes for another axis
-          if (lateralAngleError > 5) {
-            rightFrontActuatorOutput += abs(longitudinalOutput) * 0.3;
-          } else if (lateralAngleError < 5) {
-            rightBackActuatorOutput += abs(longitudinalOutput) * 0.3;
+          if (lateralAngleError > 0) {
+            rightFrontActuatorOutput += abs(longitudinalOutput) * 0.4;
+          } else if (lateralAngleError < 0) {
+            rightBackActuatorOutput += abs(longitudinalOutput) * 0.4;
           }
 
           leftFrontActuatorOutput += abs(longitudinalOutput);
@@ -283,6 +283,14 @@ void TwoDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(Actuator*
     Serial.print(longitudinalDerivativePart);
     Serial.print(" | Long int: ");
     Serial.print(longitudinalIntegralPart);
+    Serial.print(" | left bottom front muscle open(ms): ");
+    Serial.print(leftFrontActuatorOutput);
+    Serial.print(" | right bottom front muscle open(ms): ");
+    Serial.print(rightFrontActuatorOutput);
+    Serial.print(" | left bottom back muscle open(ms): ");
+    Serial.print(leftBackActuatorOutput);
+    Serial.print(" | right bottom back muscle open(ms): ");
+    Serial.print(rightBackActuatorOutput);
 
     // Prepare for next iteration
     previousLateralError = lateralAngleError;
@@ -328,7 +336,7 @@ float TwoDOFAntagonisticParticularMuscleControlAlgorithm::getLongitudinalTargetA
 
 void TwoDOFAntagonisticParticularMuscleControlAlgorithm::setSpecificControlTargets(ControlTarget targets[],
                                                                       size_t numberOfControlTargets, float startTime,
-                                                                      float controlTime) {
+                                                                      unsigned long controlTime) {
   // Check integrity of array
   float previousValue = 0;
   for (size_t i = 0; i < numberOfControlTargets; ++i) {
