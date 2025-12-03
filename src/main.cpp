@@ -2,8 +2,8 @@
 #include "Arduino.h"
 #include "Wire.h"
 #include "control-algorithms/AntagonisticPIDControlAlgorithm.h"
-#include "control-algorithms/TwoDOFAntagonisticParticularMuscleControlAlgorithm.h"
 #include "control-algorithms/PIDControlAlgorithm.h"
+#include "control-algorithms/TwoDOFAntagonisticParticularMuscleControlAlgorithm.h"
 #include "enums/ValveType.h"
 #include "models/Actuator.h"
 #include "models/Gyroscope.h"
@@ -12,25 +12,8 @@
 #include "services/ArduinoMonitorService.h"
 #include "services/ValveFactory.h"
 
-const int availableValvePins[] = {4, 5, 6, 7, 10, 11, 12, 13};
-
-Muscle* leftMuscle;
-Actuator* topFrontActuator;
-Actuator* topBackActuator;
-Actuator* frontActuator;
-Actuator* leftActuator;
-Actuator* rightActuator;
-Actuator* backActuator;
-Actuator* leftFrontActuator;
-Actuator* rightFrontActuator;
-Actuator* leftBackActuator;
-Actuator* rightBackActuator;
+SystemComponents systemComponents;
 ValveFactory* valveFactory;
-Gyroscope* gyroscope;
-IControlAlgorithm* controlAlgorithm;
-AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm;
-TwoDOFAntagonisticPIDControlAlgorithm* twoDOFAntagonisticControlAlgorithm;
-TwoDOFAntagonisticParticularMuscleControlAlgorithm* twoDOFAntagonisticParticularMuscleControlAlgorithm;
 ArduinoMonitorService* arduinoMonitorService;
 
 static IValve* topFrontInletValves[1];
@@ -57,6 +40,7 @@ static IValve* rightBackInletValves[1];
 static IValve* rightBackOutletValves[1];
 
 void setup() {
+  // setup communication speed with terminal
   Serial.begin(115200);
   // needed for MPU6050 readings and I2C scanner
   Wire.begin();
@@ -64,70 +48,73 @@ void setup() {
   arduinoMonitorService = new ArduinoMonitorService();
   valveFactory = new ValveFactory();
 
-  gyroscope = new Gyroscope(0x68);
-  controlAlgorithm = new PIDControlAlgorithm();
-  antagonisticControlAlgorithm = new AntagonisticPIDControlAlgorithm();
-  twoDOFAntagonisticControlAlgorithm = new TwoDOFAntagonisticPIDControlAlgorithm();
-  twoDOFAntagonisticParticularMuscleControlAlgorithm = new TwoDOFAntagonisticParticularMuscleControlAlgorithm();
-  leftMuscle = new Muscle(valveFactory->createValve(13, ValveType::INLET),
-                          valveFactory->createValve(1, ValveType::OUTLET, 0X60));
+  systemComponents.gyroscope = new Gyroscope(0x68);
 
+  // Init of control algorithms
+  systemComponents.controlAlgorithm = new PIDControlAlgorithm();
+  systemComponents.antagonisticControlAlgorithm = new AntagonisticPIDControlAlgorithm();
+  systemComponents.twoDOFAntagonisticControlAlgorithm = new TwoDOFAntagonisticPIDControlAlgorithm();
+  systemComponents.twoDOFAntagonisticParticularMuscleControlAlgorithm =
+      new TwoDOFAntagonisticParticularMuscleControlAlgorithm();
+
+  // One muscle for non-antagonistic gravity pull test with test stand V1
+  systemComponents.muscle = new Muscle(valveFactory->createValve(13, ValveType::INLET),
+                                       valveFactory->createValve(1, ValveType::OUTLET, 0X60));
+
+  // Upper leg actuators initialization
   topFrontInletValves[0] = valveFactory->createValve(12, ValveType::INLET);
   topFrontOutletValves[0] = valveFactory->createValve(3, ValveType::OUTLET, 0x61);
-  topFrontActuator = new Actuator(topFrontInletValves, 1, topFrontOutletValves, 1);
+  systemComponents.topFrontActuator = new Actuator(topFrontInletValves, 1, topFrontOutletValves, 1);
 
   topBackInletValves[0] = valveFactory->createValve(11, ValveType::INLET);
   topBackOutletValves[0] = valveFactory->createValve(4, ValveType::OUTLET, 0x61);
-  topBackActuator = new Actuator(topBackInletValves, 1, topBackOutletValves, 1);
+  systemComponents.topBackActuator = new Actuator(topBackInletValves, 1, topBackOutletValves, 1);
 
+  // Antagonistic 1 and 2 DOF actuator algorithm parts initialization
   frontInletValves[0] = valveFactory->createValve(4, ValveType::INLET, 0x60);
   frontInletValves[1] = valveFactory->createValve(13, ValveType::INLET);
   frontOutletValves[0] = valveFactory->createValve(1, ValveType::OUTLET, 0x60);
   frontOutletValves[1] = valveFactory->createValve(3, ValveType::OUTLET, 0x60);
-  frontActuator = new Actuator(frontInletValves, 2, frontOutletValves, 2);
+  systemComponents.frontActuator = new Actuator(frontInletValves, 2, frontOutletValves, 2);
 
   leftInletValves[0] = valveFactory->createValve(13, ValveType::INLET);
   leftInletValves[1] = valveFactory->createValve(4, ValveType::INLET);
   leftOutletValves[0] = valveFactory->createValve(6, ValveType::OUTLET);
   leftOutletValves[1] = valveFactory->createValve(1, ValveType::OUTLET, 0X60);
-  leftActuator = new Actuator(leftInletValves, 2, leftOutletValves, 2);
+  systemComponents.leftActuator = new Actuator(leftInletValves, 2, leftOutletValves, 2);
 
   rightInletValves[0] = valveFactory->createValve(10, ValveType::INLET);
   rightInletValves[1] = valveFactory->createValve(4, ValveType::INLET, 0x60);
   rightOutletValves[0] = valveFactory->createValve(7, ValveType::OUTLET);
   rightOutletValves[1] = valveFactory->createValve(3, ValveType::OUTLET, 0X60);
-  rightActuator = new Actuator(rightInletValves, 2, rightOutletValves, 2);
+  systemComponents.rightActuator = new Actuator(rightInletValves, 2, rightOutletValves, 2);
 
   backInletValves[0] = valveFactory->createValve(4, ValveType::INLET);
   backInletValves[1] = valveFactory->createValve(10, ValveType::INLET);
   backOutletValves[0] = valveFactory->createValve(7, ValveType::OUTLET);
   backOutletValves[1] = valveFactory->createValve(6, ValveType::OUTLET);
-  backActuator = new Actuator(backInletValves, 2, backOutletValves, 2);
+  systemComponents.backActuator = new Actuator(backInletValves, 2, backOutletValves, 2);
 
-  // particular muscle init
+  // Antagonistic 2 DOF particular muscle algorithm parts initialization
   leftFrontInletValves[0] = valveFactory->createValve(13, ValveType::INLET);
   leftFrontOutletValves[0] = valveFactory->createValve(1, ValveType::OUTLET, 0x60);
-  leftFrontActuator = new Actuator(leftFrontInletValves, 1, leftFrontOutletValves, 1);
+  systemComponents.leftFrontActuator = new Actuator(leftFrontInletValves, 1, leftFrontOutletValves, 1);
 
   rightFrontInletValves[0] = valveFactory->createValve(4, ValveType::INLET, 0x60);
   rightFrontOutletValves[0] = valveFactory->createValve(3, ValveType::OUTLET, 0x60);
-  rightFrontActuator = new Actuator(rightFrontInletValves, 1, rightFrontOutletValves, 1);
+  systemComponents.rightFrontActuator = new Actuator(rightFrontInletValves, 1, rightFrontOutletValves, 1);
 
   leftBackInletValves[0] = valveFactory->createValve(4, ValveType::INLET);
   leftBackOutletValves[0] = valveFactory->createValve(6, ValveType::OUTLET);
-  leftBackActuator = new Actuator(leftBackInletValves, 1, leftBackOutletValves, 1);
+  systemComponents.leftBackActuator = new Actuator(leftBackInletValves, 1, leftBackOutletValves, 1);
 
   rightBackInletValves[0] = valveFactory->createValve(10, ValveType::INLET);
   rightBackOutletValves[0] = valveFactory->createValve(7, ValveType::OUTLET);
-  rightBackActuator = new Actuator(rightBackInletValves, 1, rightBackOutletValves, 1);
+  systemComponents.rightBackActuator = new Actuator(rightBackInletValves, 1, rightBackOutletValves, 1);
 
   arduinoMonitorService->printPossibleCommands(nullptr);
 }
 
 void loop() {
-  arduinoMonitorService->controlThroughMonitor(leftMuscle, gyroscope, controlAlgorithm, antagonisticControlAlgorithm,
-                                               twoDOFAntagonisticControlAlgorithm, twoDOFAntagonisticParticularMuscleControlAlgorithm,
-                                               frontActuator, backActuator,
-                                               leftActuator, rightActuator, topFrontActuator, topBackActuator,
-                                              leftFrontActuator, rightFrontActuator, leftBackActuator, rightBackActuator);
+  arduinoMonitorService->controlThroughMonitor(systemComponents);
 }

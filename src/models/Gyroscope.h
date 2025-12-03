@@ -74,6 +74,13 @@ class Gyroscope {
   void printValues();
 
   /**
+   * Print values for selected time length
+   *
+   * @param length Time length in seconds for which gyroscope data will be printed
+   */
+  void printValues(int length);
+
+  /**
    * @param invert Whether to flip the sign
    * @return Current angle on X axis corrected by reference set up through calibration.
    */

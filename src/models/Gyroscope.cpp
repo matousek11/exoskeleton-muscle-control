@@ -76,6 +76,16 @@ void Gyroscope::printValues() {
   Serial.println(getZAngle());
 }
 
+void Gyroscope::printValues(int length) {
+  Serial.println("Show gyroscope output for " + String(length) + " seconds");
+  unsigned long startTime = millis();
+
+  while (millis() - startTime < length * 1000) {
+    updateValues();
+    printValues();
+  }
+}
+
 float Gyroscope::getXAngle(bool invert) {
   float value = !invert ? angleX : -angleX;
   return value - referenceAngleX;

@@ -11,6 +11,28 @@
 #include "Arduino.h"
 
 /**
+ * @brief Structure holding all system components for monitor control
+ */
+struct SystemComponents {
+  Muscle* muscle;
+  Gyroscope* gyroscope;
+  IControlAlgorithm* controlAlgorithm;
+  AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm;
+  TwoDOFAntagonisticPIDControlAlgorithm* twoDOFAntagonisticControlAlgorithm;
+  TwoDOFAntagonisticParticularMuscleControlAlgorithm* twoDOFAntagonisticParticularMuscleControlAlgorithm;
+  Actuator* frontActuator;
+  Actuator* backActuator;
+  Actuator* leftActuator;
+  Actuator* rightActuator;
+  Actuator* topFrontActuator;
+  Actuator* topBackActuator;
+  Actuator* leftFrontActuator;
+  Actuator* rightFrontActuator;
+  Actuator* leftBackActuator;
+  Actuator* rightBackActuator;
+};
+
+/**
  * @brief Houses everything that's used for control of app through monitor.
  *
  * Used for start up of app when controlled through monitor.
@@ -30,17 +52,9 @@ class ArduinoMonitorService {
    *
    * Serves as entry point for app when controlled through monitor terminal.
    *
-   * @param muscle muscle which would be controlled through monitor
-   * @param gyroscope gyroscope which would be controlled through monitor
-   * @param controlAlgorithm algorithm used to control the system angle
+   * @param systemComponents System components structure containing all actuators, algorithms, and sensors
    */
-  void controlThroughMonitor(Muscle* muscle, Gyroscope* gyroscope, IControlAlgorithm* controlAlgorithm,
-                             AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm,
-                             TwoDOFAntagonisticPIDControlAlgorithm* twoDOFAntagonisticControlAlgorithm,
-                             TwoDOFAntagonisticParticularMuscleControlAlgorithm* twoDOFAntagonisticParticularMuscleControlAlgorithm,
-                             Actuator* frontActuator, Actuator* backActuator, Actuator* leftActuator,
-                             Actuator* rightActuator, Actuator* topFrontActuator, Actuator* topBackActuator,
-                             Actuator* leftFrontActuator, Actuator* rightFrontActuator, Actuator* leftBackActuator, Actuator* rightBackActuator);
+  void controlThroughMonitor(const SystemComponents& systemComponents);
 
   /**
    * @brief Prints help with commands for user into monitor.
@@ -49,6 +63,11 @@ class ArduinoMonitorService {
    * @param unknownCommand whether unknown command was used
    */
   void printPossibleCommands(String* inputCommand = nullptr, bool unknownCommand = false);
+
+  /**
+   * @brief Close all valves in the system.
+   */
+  void closeAllValves(const SystemComponents& systemComponents);
 };
 
 #endif
