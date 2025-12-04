@@ -74,6 +74,11 @@ class Muscle {
    * Test valves by opening and closing them for several times.
    */
   void test();
+
+  /**
+   * Retracts and extends muscle to test cycle life.
+   */
+  void cycleTest();
 };
 
 #endif

@@ -172,6 +172,8 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
     systemComponents.topBackActuator->test();
   } else if (command.equalsIgnoreCase("close-all") || command.equalsIgnoreCase("c")) {
     closeAllValves(systemComponents);
+  } else if (command.equalsIgnoreCase("cycle-test")) {
+    systemComponents.muscle->cycleTest();
   } else {
     unknownCommand = true;
   }
@@ -192,8 +194,8 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
 
   Serial.println("--- Commands ---");
   Serial.println(
-      "Muscle commands: 'e' - extend, 'r' - retract, '+' - pressurize valve for 50ms, '-' - depressurize valve for "
-      "50ms, 'test' - tests muscles valves, 'status' - status of muscle");
+      "Muscle commands: 'e' - extend, 'r' - retract, '+' - pressurize valve for 25ms, '-' - depressurize valve for "
+      "25ms, 'test' - tests muscles valves, 'status' - status of muscle");
   Serial.println(
       "Commands for valves on muscle: 'io' - open input valve, 'ic' - close "
       "input valve, 'oo' - "
@@ -229,6 +231,7 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "Right actuator commands: 're' - right extend, 'rr' - right retract, 'r+' - add pressure to right, 'r-' - "
       "remove pressure from right, 'r-test' - test run of right actuators");
   Serial.println("All valves commands: 'close-all/c' - close all valves");
+  Serial.println("Tests: 'cycle-test' - runs cycle test on muscle, cancelled by c");
   Serial.println("Debug tools: 'i2c' - I2C device scanner");
 }
 

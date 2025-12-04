@@ -130,3 +130,25 @@ void Muscle::test() {
   delay(1000);
   extend();
 }
+
+void Muscle::cycleTest() {
+  int numberOfCycles = 0;
+  while (true) {
+    if (Serial.available() > 0) {
+      char c = Serial.read();
+      if (c == 'c') {
+        Serial.println("--- Emergency stop ---");
+        extend();
+        delay(1500);
+        break;
+      }
+    }
+
+    retract();
+    delay(700);
+    extend();
+    delay(700);
+    numberOfCycles += 1;
+    Serial.println("Cycle: " + String(numberOfCycles));
+  }
+}
