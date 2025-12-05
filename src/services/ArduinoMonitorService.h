@@ -15,6 +15,7 @@
  */
 struct SystemComponents {
   Muscle* muscle;
+  Gyroscope* upperGyroscope;
   Gyroscope* gyroscope;
   IControlAlgorithm* controlAlgorithm;
   AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm;

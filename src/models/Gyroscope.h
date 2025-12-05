@@ -70,15 +70,18 @@ class Gyroscope {
 
   /**
    * Print angles that are currently saved in attributes.
+   * 
+   * @param gyroscope Gyroscope that angles should be relative to
    */
-  void printValues();
+  void printValues(Gyroscope* gyroscope = nullptr);
 
   /**
    * Print values for selected time length
    *
    * @param length Time length in seconds for which gyroscope data will be printed
+   * @param gyroscope Gyroscope that angles should be relative to
    */
-  void printValues(int length);
+  void printValues(int length, Gyroscope* gyroscope);
 
   /**
    * @param invert Whether to flip the sign

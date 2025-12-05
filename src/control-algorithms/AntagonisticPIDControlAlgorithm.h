@@ -42,7 +42,7 @@ class AntagonisticPIDControlAlgorithm {
    * @param number_of_targets number of angle targets in array
    */
   void controlMuscle(Actuator* forwardActuator, Actuator* backwardActuator, Gyroscope* gyroscope, int controlTime,
-                     ControlTarget targets[], size_t number_of_targets);
+                     ControlTarget targets[], size_t number_of_targets, Gyroscope* upperGyroscope = nullptr);
 
   void deleteTargets();
 };

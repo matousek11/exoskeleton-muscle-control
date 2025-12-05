@@ -9,7 +9,7 @@ AntagonisticPIDControlAlgorithm::AntagonisticPIDControlAlgorithm() {
 
 void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, Actuator* backwardActuator,
                                                     Gyroscope* gyroscope, int controlTime, ControlTarget targets[],
-                                                    size_t number_of_targets) {
+                                                    size_t number_of_targets, Gyroscope* upperGyroscope = nullptr) {
   // --- PID tuning parameters ---
   const float Kp = 0.1f;    // Proportional gain
   const float Ki = 0.24f;   // Integral gain
@@ -58,8 +58,18 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
     // --- Read current angle ---
     for (int i = 0; i < 30; i++) {
       gyroscope->updateValues();
+      if (upperGyroscope != nullptr) {
+        upperGyroscope->updateValues();
+      }
     }
-    float currentAngle = gyroscope->getYAngle();
+
+    float currentAngle = 0;
+    if (upperGyroscope == nullptr) {
+      currentAngle = gyroscope->getYAngle();
+    } else {
+      currentAngle = gyroscope->getYAngle();
+    }
+    
 
     // --- PID calculations ---
     float error = targetYAngle - currentAngle;

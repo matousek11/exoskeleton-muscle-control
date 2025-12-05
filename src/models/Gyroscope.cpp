@@ -67,22 +67,41 @@ void Gyroscope::updateValues() {
   angleZ = gyroscopeWeight * (angleZ + gyroscopeZ * dt) + accelerometerWeight * accAngleZ;
 }
 
-void Gyroscope::printValues() {
+void Gyroscope::printValues(Gyroscope* gyroscope = nullptr) {
+  if (gyroscope == nullptr) {
+    Serial.print("Angle X: ");
+    Serial.print(getXAngle());
+    Serial.print(", Angle Y: ");
+    Serial.print(getYAngle());
+    Serial.print(", Angle Z: ");
+    Serial.println(getZAngle());
+    return;
+  }
+
   Serial.print("Angle X: ");
   Serial.print(getXAngle());
+  Serial.print("Ref X: ");
+  Serial.print(gyroscope->getXAngle());
   Serial.print(", Angle Y: ");
   Serial.print(getYAngle());
+  Serial.print("Ref Y: ");
+  Serial.print(gyroscope->getYAngle());
   Serial.print(", Angle Z: ");
-  Serial.println(getZAngle());
+  Serial.print(getZAngle());
+  Serial.print("Ref Z: ");
+  Serial.println(gyroscope->getZAngle());
 }
 
-void Gyroscope::printValues(int length) {
+void Gyroscope::printValues(int length, Gyroscope* gyroscope = nullptr) {
   Serial.println("Show gyroscope output for " + String(length) + " seconds");
   unsigned long startTime = millis();
 
   while (millis() - startTime < length * 1000) {
     updateValues();
-    printValues();
+    if (gyroscope != nullptr) {
+      gyroscope->updateValues();
+    }
+    printValues(gyroscope);
   }
 }
 

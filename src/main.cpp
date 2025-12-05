@@ -48,6 +48,7 @@ void setup() {
   arduinoMonitorService = new ArduinoMonitorService();
   valveFactory = new ValveFactory();
 
+  systemComponents.upperGyroscope = new Gyroscope(0x69);
   systemComponents.gyroscope = new Gyroscope(0x68);
 
   // Init of control algorithms

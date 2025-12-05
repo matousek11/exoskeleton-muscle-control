@@ -50,10 +50,14 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
     Serial.println(systemComponents.muscle->getStatus());
   } else if (command.equalsIgnoreCase("test")) {
     systemComponents.muscle->test();
-  } else if (command.equalsIgnoreCase("dg2")) {
-    systemComponents.gyroscope->printValues(2);
-  } else if (command.equalsIgnoreCase("dg10")) {
-    systemComponents.gyroscope->printValues(10);
+  } else if (command.equalsIgnoreCase("bdg2")) {
+    systemComponents.gyroscope->printValues(2, nullptr);
+  } else if (command.equalsIgnoreCase("bdg10")) {
+    systemComponents.gyroscope->printValues(10, nullptr);
+  } else if (command.equalsIgnoreCase("tdg2")) {
+    systemComponents.upperGyroscope->printValues(2, systemComponents.gyroscope);
+  } else if (command.equalsIgnoreCase("tdg10")) {
+    systemComponents.upperGyroscope->printValues(10, systemComponents.gyroscope);
   } else if (command.equalsIgnoreCase("ia")) {
     Serial.println("Init axis");
     systemComponents.gyroscope->calibrateXAngle();
@@ -72,6 +76,14 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
                                                      targets, 4);
   } else if (command.equalsIgnoreCase("t-ant-dyn")) {
     Serial.println("target -20, 0 degrees, 10 degrees and -10 degrees");
+    ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 90.0f), ControlTarget(0.25f, 0.0f, 90.0f),
+                                ControlTarget(0.5f, 10.0f, 90.0f), ControlTarget(0.75f, -20.0f, 90.0f)};
+    systemComponents.antagonisticControlAlgorithm->controlMuscle(
+        systemComponents.frontActuator, systemComponents.backActuator, systemComponents.gyroscope, 23000, targets, 4);
+
+    closeAllValves(systemComponents);
+  } else if (command.equalsIgnoreCase("t-t-ant-dyn")) {
+    Serial.println("target -90, -10 degrees, -45 degrees and -10 degrees");
     ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 90.0f), ControlTarget(0.25f, 0.0f, 90.0f),
                                 ControlTarget(0.5f, 10.0f, 90.0f), ControlTarget(0.75f, -20.0f, 90.0f)};
     systemComponents.antagonisticControlAlgorithm->controlMuscle(
@@ -201,7 +213,7 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "input valve, 'oo' - "
       "open output valve, 'oc' - close output valve");
   Serial.println(
-      "Commands for gyroscope (MPU6050): 'dg2/dg10/dg60' - show gyroscope output for 2s/10s/60s, 'ia' - init axis "
+      "Commands for gyroscope (MPU6050): 'bdg2/bdg10' - display bottom gyroscope output for 2s/10s, 'tdg2/tdg10' - display top gyroscope output for 2s/10s, 'ia' - init axis "
       "(first run "
       "dg10)");
   Serial.println(
@@ -209,7 +221,7 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "degrees, 't-dyn' - target 70 and then 30 degrees, "
       "'t-ant-dyn' - target -20, 0, 10 and -20 degrees, 't-ant-dyn-2-dof' - target -20;0, 0;0, 10;0 and -20;0, "
       "'t-ant-dyn-2-dof-v2' - target -20;80, 0;100, 10;80 and -20;90 with particular muscles"
-      "degrees");
+      "degrees, 't-t-ant-dyn' - test for upper part of leg - target -20, 0, 10 and -20 degrees");
   Serial.println(
       "Top front actuator commands: 'tfe' - top front extend, 'tfr' - top front retract, 'tf+' - add pressure to top "
       "front, 'tf-' - "
