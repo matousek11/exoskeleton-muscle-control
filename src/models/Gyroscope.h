@@ -55,6 +55,15 @@ class Gyroscope {
    */
   unsigned long timer;
 
+  // Orientation quaternion (w, x, y, z)
+  float q0 = 1.0f;
+  float q1 = 0.0f;
+  float q2 = 0.0f;
+  float q3 = 0.0f;
+
+  // Mahony filter proportional gain (integral term omitted for simplicity)
+  const float twoKp = 4.0f;  // 2 * Kp with Kp = 2.0f
+
   /**
    * Prepares gyroscope for work.
    */
@@ -70,7 +79,7 @@ class Gyroscope {
 
   /**
    * Print angles that are currently saved in attributes.
-   * 
+   *
    * @param gyroscope Gyroscope that angles should be relative to
    */
   void printValues(Gyroscope* gyroscope = nullptr);
