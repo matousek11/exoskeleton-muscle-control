@@ -2,6 +2,7 @@
 #define ARDUINOMONITORSERVICE_H_
 
 #include "./../control-algorithms/AntagonisticPIDControlAlgorithm.h"
+#include "./../control-algorithms/ThreeDOFAntagonisticParticularMuscleControlAlgorithm.h"
 #include "./../control-algorithms/TwoDOFAntagonisticPIDControlAlgorithm.h"
 #include "./../control-algorithms/TwoDOFAntagonisticParticularMuscleControlAlgorithm.h"
 #include "./../interfaces/IControlAlgorithm.h"
@@ -21,6 +22,8 @@ struct SystemComponents {
   AntagonisticPIDControlAlgorithm* antagonisticControlAlgorithm;
   TwoDOFAntagonisticPIDControlAlgorithm* twoDOFAntagonisticControlAlgorithm;
   TwoDOFAntagonisticParticularMuscleControlAlgorithm* twoDOFAntagonisticParticularMuscleControlAlgorithm;
+  ThreeDOFAntagonisticParticularMuscleControlAlgorithm* threeDOFAntagonisticParticularMuscleControlAlgorithm;
+
   Actuator* frontActuator;
   Actuator* backActuator;
   Actuator* leftActuator;

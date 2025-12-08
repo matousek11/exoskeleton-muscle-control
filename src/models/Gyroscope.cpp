@@ -45,12 +45,16 @@ void Gyroscope::initialize() {
   Serial.println("Aligning gyroscope angle with physical device...");
   unsigned long startTime = millis();
   while (millis() - startTime < 5000) {
-    updateValues();
+    updateValues(nullptr);
   }
   Serial.println("Gyroscope aligned");
 }
 
-void Gyroscope::updateValues() {
+void Gyroscope::updateValues(Gyroscope* referenceGyroscope) {
+  if (referenceGyroscope != nullptr) {
+    referenceGyroscope->updateValues(nullptr);
+  }
+
   static unsigned long lastTime = 0;
   unsigned long now = millis();
 
@@ -123,73 +127,71 @@ void Gyroscope::updateValues() {
   angleZ = unwrapNearest(yaw, angleZ);
 }
 
-void Gyroscope::printValues(Gyroscope* gyroscope) {
+void Gyroscope::printValues(Gyroscope* referenceGyroscope) {
   float baseX = 0.0f;
   float baseY = 0.0f;
   float baseZ = 0.0f;
 
-  if (gyroscope != nullptr) {
-    baseX = gyroscope->getXAngle();
-    baseY = gyroscope->getYAngle();
-    baseZ = gyroscope->getZAngle();
+  if (referenceGyroscope != nullptr) {
+    baseX = referenceGyroscope->getXAngle();
+    baseY = referenceGyroscope->getYAngle();
+    baseZ = referenceGyroscope->getZAngle();
   }
 
   Serial.print("Angle X: ");
   Serial.print(getXAngle() - baseX);
   Serial.print(", Angle Y: ");
   Serial.print(getYAngle() - baseY);
-  Serial.print(", Ref Y: ");
-  Serial.print(baseY);
   Serial.print(", Angle Z: ");
   Serial.println(getZAngle() - baseZ);
 }
 
-void Gyroscope::printValues(int length, Gyroscope* gyroscope) {
-  Serial.println("Show gyroscope output for " + String(length) + " seconds");
-  unsigned long startTime = millis();
+void Gyroscope::printValues(int length, Gyroscope* referenceGyroscope) {
+  Serial.println("Show gyroscope output");
 
-  if (length == 0) {
-    while (true) {
-      // stop command
-      if (Serial.available() > 0) {
-        char c = Serial.read();
-        if (c == 'c') {
-          Serial.println("--- Stop ---");
-          break;
-        }
+  while (true) {
+    // stop command
+    if (Serial.available() > 0) {
+      char c = Serial.read();
+      if (c == 'c') {
+        Serial.println("--- Stop ---");
+        break;
       }
-
-      updateValues();
-      if (gyroscope != nullptr) {
-        gyroscope->updateValues();
-      }
-      printValues(gyroscope);
     }
-    return;
-  }
 
-  while (millis() - startTime < length * 1000) {
-    updateValues();
-    if (gyroscope != nullptr) {
-      gyroscope->updateValues();
-    }
-    printValues(gyroscope);
+    updateValues(referenceGyroscope);
+    printValues(referenceGyroscope);
   }
 }
 
-float Gyroscope::getXAngle(bool invert) {
+float Gyroscope::getXAngle(bool invert, Gyroscope* referenceGyroscope) {
   float value = !invert ? angleX : -angleX;
-  return value - referenceAngleX;
+  if (referenceGyroscope == nullptr) {
+    return value;
+  }
+
+  return value - referenceGyroscope->getXAngle();
+  // return value - referenceAngleX;
 }
 
-float Gyroscope::getYAngle(bool invert) {
+float Gyroscope::getYAngle(bool invert, Gyroscope* referenceGyroscope) {
   float value = !invert ? angleY : -angleY;
-  return value - referenceAngleY;
+  if (referenceGyroscope == nullptr) {
+    return value;
+  }
+
+  return value - referenceGyroscope->getYAngle();
+  // return value - referenceAngleY;
 }
 
-float Gyroscope::getZAngle(bool invert) {
+float Gyroscope::getZAngle(bool invert, Gyroscope* referenceGyroscope) {
   float value = !invert ? angleZ : -angleZ;
-  return value - referenceAngleZ;
+  if (referenceGyroscope == nullptr) {
+    return value;
+  }
+
+  return value - referenceGyroscope->getZAngle();
+  // return value - referenceAngleZ;
 }
 
 void Gyroscope::calibrateXAngle() {  // maybe it has a bug when inverted

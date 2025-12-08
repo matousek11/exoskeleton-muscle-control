@@ -3,6 +3,7 @@
 #include "Wire.h"
 #include "control-algorithms/AntagonisticPIDControlAlgorithm.h"
 #include "control-algorithms/PIDControlAlgorithm.h"
+#include "control-algorithms/ThreeDOFAntagonisticParticularMuscleControlAlgorithm.h"
 #include "control-algorithms/TwoDOFAntagonisticParticularMuscleControlAlgorithm.h"
 #include "enums/ValveType.h"
 #include "models/Actuator.h"
@@ -57,6 +58,8 @@ void setup() {
   systemComponents.twoDOFAntagonisticControlAlgorithm = new TwoDOFAntagonisticPIDControlAlgorithm();
   systemComponents.twoDOFAntagonisticParticularMuscleControlAlgorithm =
       new TwoDOFAntagonisticParticularMuscleControlAlgorithm();
+  systemComponents.threeDOFAntagonisticParticularMuscleControlAlgorithm =
+      new ThreeDOFAntagonisticParticularMuscleControlAlgorithm();
 
   // One muscle for non-antagonistic gravity pull test with test stand V1
   systemComponents.muscle = new Muscle(valveFactory->createValve(13, ValveType::INLET),

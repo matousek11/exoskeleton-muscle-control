@@ -75,15 +75,8 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
     ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 90.0f), ControlTarget(0.25f, 0.0f, 90.0f),
                                 ControlTarget(0.5f, 10.0f, 90.0f), ControlTarget(0.75f, -20.0f, 90.0f)};
     systemComponents.antagonisticControlAlgorithm->controlMuscle(
-        systemComponents.frontActuator, systemComponents.backActuator, systemComponents.gyroscope, 23000, targets, 4);
-
-    closeAllValves(systemComponents);
-  } else if (command.equalsIgnoreCase("t-t-ant-dyn")) {
-    Serial.println("target -90, -10 degrees, -45 degrees and -10 degrees");
-    ControlTarget targets[4] = {ControlTarget(0.0f, -20.0f, 90.0f), ControlTarget(0.25f, 0.0f, 90.0f),
-                                ControlTarget(0.5f, 10.0f, 90.0f), ControlTarget(0.75f, -20.0f, 90.0f)};
-    systemComponents.antagonisticControlAlgorithm->controlMuscle(
-        systemComponents.frontActuator, systemComponents.backActuator, systemComponents.gyroscope, 23000, targets, 4);
+        systemComponents.frontActuator, systemComponents.backActuator, systemComponents.gyroscope, 23000, targets, 4,
+        nullptr);
 
     closeAllValves(systemComponents);
   } else if (command.equalsIgnoreCase("t-ant-dyn-2-dof")) {
@@ -102,6 +95,27 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
     systemComponents.twoDOFAntagonisticParticularMuscleControlAlgorithm->controlMuscle(
         systemComponents.leftFrontActuator, systemComponents.rightFrontActuator, systemComponents.leftBackActuator,
         systemComponents.rightBackActuator, systemComponents.gyroscope, 40000, targets, 4);
+
+    closeAllValves(systemComponents);
+  } else if (command.equalsIgnoreCase("t-ant-dyn-3-dof")) {
+    Serial.println("target -20;-10;-90 deg, 0;10;-10 deg, 10;-10;-100 deg and -10;0;-10 deg");
+    ControlTarget lowerLegTargets[4] = {ControlTarget(0.0f, -20.0f, 80.0f), ControlTarget(0.25f, 0.0f, 100.0f),
+                                        ControlTarget(0.5f, 10.0f, 80.0f), ControlTarget(0.75f, -20.0f, 90.0f)};
+    ControlTarget upperLegTargets[4] = {ControlTarget(0.0f, -90.0f, 0.0f), ControlTarget(0.25f, -10.0f, 0.0f),
+                                        ControlTarget(0.5f, 100.0f, 0.0f), ControlTarget(0.75f, -10.0f, 0.0f)};
+    systemComponents.threeDOFAntagonisticParticularMuscleControlAlgorithm->controlMuscle(
+        systemComponents.leftFrontActuator, systemComponents.rightFrontActuator, systemComponents.leftBackActuator,
+        systemComponents.rightBackActuator, systemComponents.topFrontActuator, systemComponents.topBackActuator,
+        systemComponents.gyroscope, systemComponents.upperGyroscope, 40000, lowerLegTargets, 4, upperLegTargets, 4);
+
+    closeAllValves(systemComponents);
+  } else if (command.equalsIgnoreCase("t-up-ant-dyn")) {
+    Serial.println("target -90;0, -10;0 degrees, -100;0 degrees and -10;0 degrees for upper leg");
+    ControlTarget targets[4] = {ControlTarget(0.0f, -90.0f, 0.0f), ControlTarget(0.25f, -10.0f, 0.0f),
+                                ControlTarget(0.5f, -100.0f, 0.0f), ControlTarget(0.75f, -10.0f, 0.0f)};
+    systemComponents.antagonisticControlAlgorithm->controlMuscle(
+        systemComponents.topFrontActuator, systemComponents.topBackActuator, systemComponents.gyroscope, 40000, targets,
+        4, systemComponents.upperGyroscope);
 
     closeAllValves(systemComponents);
   } else if (command.equalsIgnoreCase("stabilize")) {
@@ -216,7 +230,10 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "degrees, 't-dyn' - target 70 and then 30 degrees, "
       "'t-ant-dyn' - target -20, 0, 10 and -20 degrees, 't-ant-dyn-2-dof' - target -20;0, 0;0, 10;0 and -20;0, "
       "'t-ant-dyn-2-dof-v2' - target -20;80, 0;100, 10;80 and -20;90 with particular muscles"
-      "degrees, 't-t-ant-dyn' - test for upper part of leg - target -20, 0, 10 and -20 degrees");
+      "degrees, 't-ant-dyn-3-dof' - target -20;-10;-90 deg, 0;10;-10 deg, 10;-10;-100 deg and -10;0;-10 deg");
+  Serial.println(
+      "Commands for feedback loop algorithms for upper leg: 't-up-ant-dyn' - test for upper part of leg - target -90, "
+      "-10, -100 and -10 degrees - stop by c");
   Serial.println(
       "Top front actuator commands: 'tfe' - top front extend, 'tfr' - top front retract, 'tf+' - add pressure to top "
       "front, 'tf-' - "

@@ -74,15 +74,17 @@ class Gyroscope {
 
   /**
    * @brief Update angles based on newest data from sensors.
+   *
+   * @param referenceGyroscope when gyroscope is passed in it will update values also for that gyroscope
    */
-  void updateValues();
+  void updateValues(Gyroscope* referenceGyroscope = nullptr);
 
   /**
    * Print angles that are currently saved in attributes.
    *
    * @param gyroscope Gyroscope that angles should be relative to
    */
-  void printValues(Gyroscope* gyroscope = nullptr);
+  void printValues(Gyroscope* referenceGyroscope = nullptr);
 
   /**
    * Print values for selected time length
@@ -90,25 +92,28 @@ class Gyroscope {
    * @param length Time length in seconds for which gyroscope data will be printed
    * @param gyroscope Gyroscope that angles should be relative to
    */
-  void printValues(int length, Gyroscope* gyroscope);
+  void printValues(int length, Gyroscope* referenceGyroscope = nullptr);
 
   /**
    * @param invert Whether to flip the sign
+   * @param referenceGyroscope when passed in angle will be calculated relatively to reference gyroscope
    * @return Current angle on X axis corrected by reference set up through calibration.
    */
-  float getXAngle(bool invert = false);
+  float getXAngle(bool invert = false, Gyroscope* referenceGyroscope = nullptr);
 
   /**
    * @param invert Whether to flip the sign
+   * @param referenceGyroscope when passed in angle will be calculated relatively to reference gyroscope
    * @return Current angle on Y axis corrected by reference set up through calibration.
    */
-  float getYAngle(bool invert = false);
+  float getYAngle(bool invert = false, Gyroscope* referenceGyroscope = nullptr);
 
   /**
    * @param invert Whether to flip the sign
+   * @param referenceGyroscope when passed in angle will be calculated relatively to reference gyroscope
    * @return Current angle on Z axis corrected by reference set up through calibration.
    */
-  float getZAngle(bool invert = false);
+  float getZAngle(bool invert = false, Gyroscope* referenceGyroscope = nullptr);
 
   /**
    * @brief Calibrates the X-axis by setting the current orientation as the new zero reference.
