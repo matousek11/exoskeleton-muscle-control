@@ -180,7 +180,10 @@ float Gyroscope::getYAngle(bool invert, Gyroscope* referenceGyroscope) {
     return value;
   }
 
-  return value - referenceGyroscope->getYAngle(true);
+  float referenceValue = referenceGyroscope->getYAngle(true);
+  //Serial.println(value);
+  //Serial.println(referenceValue);
+  return value - referenceValue;
   // return value - referenceAngleY;
 }
 

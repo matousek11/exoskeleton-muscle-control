@@ -68,7 +68,12 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
     if (upperGyroscope == nullptr) {
       currentAngle = gyroscope->getYAngle();
     } else {
-      currentAngle = upperGyroscope->getYAngle(true, gyroscope);
+      currentAngle = upperGyroscope->getYAngle(true);
+      Serial.println("Upper gyroscope:" + String(currentAngle));
+      float lowerGyroscopeAngle = gyroscope->getYAngle(true);
+      currentAngle -= lowerGyroscopeAngle;
+      Serial.println("Lower gyroscope:" + String(lowerGyroscopeAngle));
+      Serial.println(currentAngle);
     }
 
     // --- PID calculations ---
