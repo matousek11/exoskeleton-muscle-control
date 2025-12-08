@@ -30,7 +30,7 @@ class SpecificControlTarget {
       , lateralTargetAngle(lateralTargetAngle)
       , longitudinalTargetAngle(longitudinalTargetAngle) {
     if (activationPointTime < 0.0f) {
-      Serial.println("ERROR: activationPointTime must not be smaller than 0");
+      Serial.println("ERROR: activationPointTime must not be smaller than 0:" + String(activationPointTime));
       while (true);
     }
   }

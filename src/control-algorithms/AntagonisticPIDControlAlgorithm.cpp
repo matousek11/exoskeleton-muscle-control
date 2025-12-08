@@ -68,7 +68,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
     if (upperGyroscope == nullptr) {
       currentAngle = gyroscope->getYAngle();
     } else {
-      currentAngle = upperGyroscope->getYAngle(gyroscope);
+      currentAngle = upperGyroscope->getYAngle(true, gyroscope);
     }
 
     // --- PID calculations ---
