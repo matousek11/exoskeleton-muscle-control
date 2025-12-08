@@ -115,11 +115,24 @@ void Gyroscope::updateValues(Gyroscope* referenceGyroscope) {
   q2 = qc * recipNorm;
   q3 = qd * recipNorm;
 
-  // convert quaternion to Euler angles (deg)
-  // standard ZYX (yaw-pitch-roll) sequence, each in [-180, 180]
-  float roll = atan2(2.0f * (q0 * q1 + q2 * q3), 1.0f - 2.0f * (q1 * q1 + q2 * q2)) * RAD_TO_DEG;
-  float pitch = atan2(2.0f * (q0 * q2 - q1 * q3), 1.0f - 2.0f * (q2 * q2 + q3 * q3)) * RAD_TO_DEG;
-  float yaw = atan2(2.0f * (q0 * q3 + q1 * q2), 1.0f - 2.0f * (q3 * q3 + q0 * q0)) * RAD_TO_DEG;
+  // ========================================================================
+  // FIXED: Correct quaternion to Euler conversion (ZYX convention)
+  // ========================================================================
+
+  // Roll (rotation around X-axis): -180° to +180°
+  float sinr_cosp = 2.0f * (q0 * q1 + q2 * q3);
+  float cosr_cosp = 1.0f - 2.0f * (q1 * q1 + q2 * q2);
+  float roll = atan2(sinr_cosp, cosr_cosp) * RAD_TO_DEG;
+
+  // Pitch (rotation around Y-axis): -180° to +180°
+  float sinp = 2.0f * (q0 * q2 - q1 * q3);
+  float cosp = 1.0f - 2.0f * (q2 * q2 + q3 * q3);
+  float pitch = atan2(sinp, cosp) * RAD_TO_DEG;
+
+  // Yaw (rotation around Z-axis): -180° to +180°
+  float siny_cosp = 2.0f * (q0 * q3 + q1 * q2);
+  float cosy_cosp = 1.0f - 2.0f * (q2 * q2 + q3 * q3);
+  float yaw = atan2(siny_cosp, cosy_cosp) * RAD_TO_DEG;
 
   // unwrap to keep continuity over full 360°
   angleX = unwrapNearest(roll, angleX);
@@ -134,14 +147,18 @@ void Gyroscope::printValues(Gyroscope* referenceGyroscope) {
 
   if (referenceGyroscope != nullptr) {
     baseX = referenceGyroscope->getXAngle();
-    baseY = referenceGyroscope->getYAngle();
+    baseY = referenceGyroscope->getYAngle(true);
     baseZ = referenceGyroscope->getZAngle();
   }
 
   Serial.print("Angle X: ");
   Serial.print(getXAngle() - baseX);
   Serial.print(", Angle Y: ");
-  Serial.print(getYAngle() - baseY);
+  Serial.print(getYAngle(true) - baseY);
+  Serial.print(", Plain Y: ");
+  Serial.print(getYAngle(true));
+  Serial.print(", Plain reference Y: ");
+  Serial.print(baseY);
   Serial.print(", Angle Z: ");
   Serial.println(getZAngle() - baseZ);
 }
@@ -181,8 +198,8 @@ float Gyroscope::getYAngle(bool invert, Gyroscope* referenceGyroscope) {
   }
 
   float referenceValue = referenceGyroscope->getYAngle(true);
-  //Serial.println(value);
-  //Serial.println(referenceValue);
+  // Serial.println(value);
+  // Serial.println(referenceValue);
   return value - referenceValue;
   // return value - referenceAngleY;
 }
