@@ -50,14 +50,10 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
     Serial.println(systemComponents.muscle->getStatus());
   } else if (command.equalsIgnoreCase("test")) {
     systemComponents.muscle->test();
-  } else if (command.equalsIgnoreCase("bdg2")) {
-    systemComponents.gyroscope->printValues(2, nullptr);
-  } else if (command.equalsIgnoreCase("bdg10")) {
-    systemComponents.gyroscope->printValues(10, nullptr);
-  } else if (command.equalsIgnoreCase("tdg2")) {
-    systemComponents.upperGyroscope->printValues(2, systemComponents.gyroscope);
-  } else if (command.equalsIgnoreCase("tdg10")) {
-    systemComponents.upperGyroscope->printValues(10, systemComponents.gyroscope);
+  } else if (command.equalsIgnoreCase("bdg")) {
+    systemComponents.gyroscope->printValues(0, nullptr);
+  } else if (command.equalsIgnoreCase("tdg")) {
+    systemComponents.upperGyroscope->printValues(0, systemComponents.gyroscope);
   } else if (command.equalsIgnoreCase("ia")) {
     Serial.println("Init axis");
     systemComponents.gyroscope->calibrateXAngle();
@@ -213,9 +209,8 @@ void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unk
       "input valve, 'oo' - "
       "open output valve, 'oc' - close output valve");
   Serial.println(
-      "Commands for gyroscope (MPU6050): 'bdg2/bdg10' - display bottom gyroscope output for 2s/10s, 'tdg2/tdg10' - display top gyroscope output for 2s/10s, 'ia' - init axis "
-      "(first run "
-      "dg10)");
+      "Commands for gyroscope (MPU6050): 'bdg' - display bottom gyroscope output - stop by 'c', 'tdg' - "
+      "display top gyroscope output - stop by 'c'");
   Serial.println(
       "Commands for feedback loop algorithms: 'stabilize' - put test stand into start position, 't70' - target 70 "
       "degrees, 't-dyn' - target 70 and then 30 degrees, "
