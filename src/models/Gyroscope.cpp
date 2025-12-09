@@ -44,43 +44,38 @@ void Gyroscope::initialize() {
 }
 
 void Gyroscope::updateValues(Gyroscope* referenceGyroscope) {
-  unsigned long microsNow = micros();
-  if (referenceGyroscope != nullptr) {
-    referenceGyroscope->updateValues(nullptr);
-  }
-
+  unsigned long lastTime = 0;
   unsigned long now = millis();
 
-  if (microsNow - microsPrevious >= microsPerReading) {
-    int16_t ax, ay, az, gx, gy, gz;
-    mpu->getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+  // calculate time difference
+  float dt = (lastTime == 0) ? 0.01f : (now - lastTime) / 1000.0f;
+  lastTime = now;
 
-    float ax_g = ax / 16384.0;
-    float ay_g = ay / 16384.0;
-    float az_g = az / 16384.0;
+  const float accelerometerWeight = 0.1f;
+  const float gyroscopeWeight = 0.90f;
 
-    float gx_deg = gx / 131.0;
-    float gy_deg = gy / 131.0;
-    float gz_deg = gz / 131.0;
+  int16_t ax, ay, az, gx, gy, gz;
+  mpu->getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
-    filter->updateIMU(gx_deg, gy_deg, gz_deg, ax_g, ay_g, az_g);
+  // convert from raw data to g and deg/s
+  float accelerometerX = ax / 16384.0f;
+  float accelerometerY = ay / 16384.0f;
+  float accelerometerZ = az / 16384.0f;
+  float gyroscopeX = gx / 131.0f;
+  float gyroscopeY = gy / 131.0f;
+  float gyroscopeZ = gz / 131.0f;
 
-    // Získání hodnot
-    float rawX = filter->getRoll();
-    angleY = filter->getPitch();
+  // angle from accelerometer (axis X)
+  float accAngleX = atan2(accelerometerY, accelerometerZ) * 180.0f / PI;
+  float accAngleY =
+      atan2(-accelerometerX, sqrt(accelerometerY * accelerometerY + accelerometerZ * accelerometerZ)) * 180.0f / PI;
+  float accAngleZ =
+      atan2(sqrt(accelerometerX * accelerometerX + accelerometerY * accelerometerY), accelerometerZ) * 180.0f / PI;
 
-    // --- NORMALIZACE 0 až 360 (Vše v jednom kroku) ---
-
-    // Osa X
-    angleX = fmod(rawX, 360.0);
-    if (angleX < 0) angleX += 360.0;
-
-    // Osa Y
-    // angleY = fmod(rawY, 360.0);
-    // if (angleY < 0) angleY += 360.0;
-
-    microsPrevious = microsPrevious + microsPerReading;
-  }
+  // complementary filters for sensor data fusion
+  angleX = gyroscopeWeight * (angleX + gyroscopeX * dt) + accelerometerWeight * accAngleX;
+  angleY = gyroscopeWeight * (angleY + gyroscopeY * dt) + accelerometerWeight * accAngleY;
+  angleZ = gyroscopeWeight * (angleZ + gyroscopeZ * dt) + accelerometerWeight * accAngleZ;
 }
 
 void Gyroscope::printValues(Gyroscope* referenceGyroscope) {
