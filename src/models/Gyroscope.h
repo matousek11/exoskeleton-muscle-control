@@ -5,6 +5,7 @@
 
 #include "I2Cdev.h"
 #include "MPU6050.h"
+#include "MadgwickAHRS.h"
 
 /**
  * Wrapper class around MPU6050 that makes reading of angles easier.
@@ -12,6 +13,7 @@
 class Gyroscope {
  private:
   MPU6050* mpu;
+  Madgwick* filter;
   uint8_t addrOfMPU6050;
 
   /**

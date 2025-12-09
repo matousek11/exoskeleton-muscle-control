@@ -45,6 +45,7 @@ void setup() {
   Serial.begin(115200);
   // needed for MPU6050 readings and I2C scanner
   Wire.begin();
+  Wire.setClock(400000);
 
   arduinoMonitorService = new ArduinoMonitorService();
   valveFactory = new ValveFactory();

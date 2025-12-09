@@ -56,6 +56,9 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
     systemComponents.upperGyroscope->printValues(0, systemComponents.gyroscope);
   } else if (command.equalsIgnoreCase("ia")) {
     Serial.println("Init axis");
+    systemComponents.upperGyroscope->calibrateXAngle();
+    systemComponents.upperGyroscope->calibrateYAngle();
+    systemComponents.upperGyroscope->calibrateZAngle();
     systemComponents.gyroscope->calibrateXAngle();
     systemComponents.gyroscope->calibrateYAngle();
     systemComponents.gyroscope->calibrateZAngle();

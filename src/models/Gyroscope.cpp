@@ -3,27 +3,13 @@
 #include "I2Cdev.h"
 #include "MPU6050.h"
 
-// keeps angle in [-180, 180] to avoid wrap jumps
-static float wrapTo180(float angle) {
-  while (angle > 180.0f) angle -= 360.0f;
-  while (angle < -180.0f) angle += 360.0f;
-  return angle;
-}
-
-// chooses representation of target closest to reference (prevents 180° flips)
-static float unwrapNearest(float target, float reference) {
-  float wrapped = wrapTo180(target);
-  float diff = wrapped - wrapTo180(reference);
-  if (diff > 180.0f)
-    wrapped -= 360.0f;
-  else if (diff < -180.0f)
-    wrapped += 360.0f;
-  return wrapped;
-}
+unsigned long microsPerReading, microsPrevious;
+#define FILTER_RATE 60
 
 Gyroscope::Gyroscope(uint8_t addrOfMPU6050) {
   this->addrOfMPU6050 = addrOfMPU6050;
   this->mpu = new MPU6050(addrOfMPU6050);
+  this->filter = new Madgwick();
 
   initialize();
 }
@@ -42,6 +28,13 @@ void Gyroscope::initialize() {
   }
   Serial.println("Gyroscope initialized");
 
+  mpu->setFullScaleGyroRange(MPU6050_GYRO_FS_250);
+  mpu->setFullScaleAccelRange(MPU6050_ACCEL_FS_2);
+
+  filter->begin(FILTER_RATE);
+  microsPerReading = 1000000 / FILTER_RATE;
+  microsPrevious = micros();
+
   Serial.println("Aligning gyroscope angle with physical device...");
   unsigned long startTime = millis();
   while (millis() - startTime < 5000) {
@@ -51,93 +44,43 @@ void Gyroscope::initialize() {
 }
 
 void Gyroscope::updateValues(Gyroscope* referenceGyroscope) {
+  unsigned long microsNow = micros();
   if (referenceGyroscope != nullptr) {
     referenceGyroscope->updateValues(nullptr);
   }
 
-  static unsigned long lastTime = 0;
   unsigned long now = millis();
 
-  // calculate time difference
-  float dt = (lastTime == 0) ? 0.01f : (now - lastTime) / 1000.0f;
-  lastTime = now;
+  if (microsNow - microsPrevious >= microsPerReading) {
+    int16_t ax, ay, az, gx, gy, gz;
+    mpu->getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
-  int16_t ax, ay, az, gx, gy, gz;
-  mpu->getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+    float ax_g = ax / 16384.0;
+    float ay_g = ay / 16384.0;
+    float az_g = az / 16384.0;
 
-  // convert from raw data to g and rad/s
-  float accelerometerX = ax / 16384.0f;
-  float accelerometerY = ay / 16384.0f;
-  float accelerometerZ = az / 16384.0f;
-  float gyroscopeX = (gx / 131.0f) * DEG_TO_RAD;
-  float gyroscopeY = (gy / 131.0f) * DEG_TO_RAD;
-  float gyroscopeZ = (gz / 131.0f) * DEG_TO_RAD;
+    float gx_deg = gx / 131.0;
+    float gy_deg = gy / 131.0;
+    float gz_deg = gz / 131.0;
 
-  // normalize accelerometer (protect against divide by zero)
-  float accNorm =
-      sqrt(accelerometerX * accelerometerX + accelerometerY * accelerometerY + accelerometerZ * accelerometerZ);
-  if (accNorm > 1e-6f) {
-    accelerometerX /= accNorm;
-    accelerometerY /= accNorm;
-    accelerometerZ /= accNorm;
+    filter->updateIMU(gx_deg, gy_deg, gz_deg, ax_g, ay_g, az_g);
+
+    // Získání hodnot
+    float rawX = filter->getRoll();
+    angleY = filter->getPitch();
+
+    // --- NORMALIZACE 0 až 360 (Vše v jednom kroku) ---
+
+    // Osa X
+    angleX = fmod(rawX, 360.0);
+    if (angleX < 0) angleX += 360.0;
+
+    // Osa Y
+    // angleY = fmod(rawY, 360.0);
+    // if (angleY < 0) angleY += 360.0;
+
+    microsPrevious = microsPrevious + microsPerReading;
   }
-
-  // estimated direction of gravity based on current quaternion
-  float vx = 2.0f * (q1 * q3 - q0 * q2);
-  float vy = 2.0f * (q0 * q1 + q2 * q3);
-  float vz = q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3;
-
-  // error between measured and estimated gravity (Mahony)
-  float ex = (accelerometerY * vz - accelerometerZ * vy);
-  float ey = (accelerometerZ * vx - accelerometerX * vz);
-  float ez = (accelerometerX * vy - accelerometerY * vx);
-
-  // apply proportional feedback
-  gyroscopeX += twoKp * ex;
-  gyroscopeY += twoKp * ey;
-  gyroscopeZ += twoKp * ez;
-
-  // integrate quaternion rate and normalize
-  float qa = q0;
-  float qb = q1;
-  float qc = q2;
-  float qd = q3;
-
-  qa += (-qb * gyroscopeX - qc * gyroscopeY - qd * gyroscopeZ) * 0.5f * dt;
-  qb += (qa * gyroscopeX + qc * gyroscopeZ - qd * gyroscopeY) * 0.5f * dt;
-  qc += (qa * gyroscopeY - qb * gyroscopeZ + qd * gyroscopeX) * 0.5f * dt;
-  qd += (qa * gyroscopeZ + qb * gyroscopeY - qc * gyroscopeX) * 0.5f * dt;
-
-  // renormalize quaternion
-  float recipNorm = 1.0f / sqrt(qa * qa + qb * qb + qc * qc + qd * qd);
-  q0 = qa * recipNorm;
-  q1 = qb * recipNorm;
-  q2 = qc * recipNorm;
-  q3 = qd * recipNorm;
-
-  // ========================================================================
-  // FIXED: Correct quaternion to Euler conversion (ZYX convention)
-  // ========================================================================
-
-  // Roll (rotation around X-axis): -180° to +180°
-  float sinr_cosp = 2.0f * (q0 * q1 + q2 * q3);
-  float cosr_cosp = 1.0f - 2.0f * (q1 * q1 + q2 * q2);
-  float roll = atan2(sinr_cosp, cosr_cosp) * RAD_TO_DEG;
-
-  // Pitch (rotation around Y-axis): -180° to +180°
-  float sinp = 2.0f * (q0 * q2 - q1 * q3);
-  float cosp = 1.0f - 2.0f * (q2 * q2 + q3 * q3);
-  float pitch = atan2(sinp, cosp) * RAD_TO_DEG;
-
-  // Yaw (rotation around Z-axis): -180° to +180°
-  float siny_cosp = 2.0f * (q0 * q3 + q1 * q2);
-  float cosy_cosp = 1.0f - 2.0f * (q2 * q2 + q3 * q3);
-  float yaw = atan2(siny_cosp, cosy_cosp) * RAD_TO_DEG;
-
-  // unwrap to keep continuity over full 360°
-  angleX = unwrapNearest(roll, angleX);
-  angleY = unwrapNearest(pitch, angleY);
-  angleZ = unwrapNearest(yaw, angleZ);
 }
 
 void Gyroscope::printValues(Gyroscope* referenceGyroscope) {
@@ -146,21 +89,21 @@ void Gyroscope::printValues(Gyroscope* referenceGyroscope) {
   float baseZ = 0.0f;
 
   if (referenceGyroscope != nullptr) {
-    baseX = referenceGyroscope->getXAngle();
-    baseY = referenceGyroscope->getYAngle(true);
-    baseZ = referenceGyroscope->getZAngle();
+    baseX = referenceGyroscope->getXAngle(false, nullptr);
+    baseY = referenceGyroscope->getYAngle(true, nullptr);
+    baseZ = referenceGyroscope->getZAngle(false, nullptr);
   }
 
   Serial.print("Angle X: ");
-  Serial.print(getXAngle() - baseX);
+  Serial.print(getXAngle(false, referenceGyroscope));
+  Serial.print(", Plain X: ");
+  Serial.print(getXAngle(false, nullptr));
+  Serial.print(", Plain reference X: ");
+  Serial.print(baseX);
   Serial.print(", Angle Y: ");
-  Serial.print(getYAngle(true) - baseY);
-  Serial.print(", Plain Y: ");
-  Serial.print(getYAngle(true));
-  Serial.print(", Plain reference Y: ");
-  Serial.print(baseY);
+  Serial.print(getYAngle(true, nullptr));
   Serial.print(", Angle Z: ");
-  Serial.println(getZAngle() - baseZ);
+  Serial.println(getZAngle(false, nullptr));
 }
 
 void Gyroscope::printValues(int length, Gyroscope* referenceGyroscope) {
@@ -183,34 +126,55 @@ void Gyroscope::printValues(int length, Gyroscope* referenceGyroscope) {
 
 float Gyroscope::getXAngle(bool invert, Gyroscope* referenceGyroscope) {
   float value = !invert ? angleX : -angleX;
-  if (referenceGyroscope == nullptr) {
-    return value;
+  float referencedFixAngle = value - referenceAngleX;
+
+  // 2. Normalization to 0-360 deg
+  referencedFixAngle = fmod(referencedFixAngle, 360.0);
+  if (referencedFixAngle < 0) {
+    referencedFixAngle += 360.0;
   }
 
-  return value - referenceGyroscope->getXAngle();
-  // return value - referenceAngleX;
+  if (referenceGyroscope == nullptr) {
+    return referencedFixAngle;
+  }
+
+  float refAngle = referenceGyroscope->getXAngle(invert, nullptr);
+
+  // Shortest angle path calculation
+  // When angle is 300 deg and ref angle is 40 deg relative angle should be 100 deg.
+  float diff = fabs(referencedFixAngle - refAngle);
+
+  if (diff > 180.0) {
+    diff = 360.0 - diff;  // If path is longer than half of circle go other way
+  }
+
+  return diff;
 }
 
 float Gyroscope::getYAngle(bool invert, Gyroscope* referenceGyroscope) {
   float value = !invert ? angleY : -angleY;
+  float referencedFixAngle = value - referenceAngleY;
+
   if (referenceGyroscope == nullptr) {
-    return value;
+    return referencedFixAngle;
   }
 
   float referenceValue = referenceGyroscope->getYAngle(true);
   // Serial.println(value);
   // Serial.println(referenceValue);
-  return value - referenceValue;
+  return referencedFixAngle - referenceValue;
   // return value - referenceAngleY;
 }
 
 float Gyroscope::getZAngle(bool invert, Gyroscope* referenceGyroscope) {
   float value = !invert ? angleZ : -angleZ;
+  float referencedFixAngle = value - referenceAngleZ;
+
   if (referenceGyroscope == nullptr) {
-    return value;
+    return referencedFixAngle;
   }
 
-  return value - referenceGyroscope->getZAngle();
+  return referencedFixAngle - referenceGyroscope->getZAngle();
   // return value - referenceAngleZ;
 }
 
