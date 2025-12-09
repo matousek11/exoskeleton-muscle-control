@@ -84,26 +84,12 @@ void Gyroscope::updateValues(Gyroscope* referenceGyroscope) {
 }
 
 void Gyroscope::printValues(Gyroscope* referenceGyroscope) {
-  float baseX = 0.0f;
-  float baseY = 0.0f;
-  float baseZ = 0.0f;
-
-  if (referenceGyroscope != nullptr) {
-    baseX = referenceGyroscope->getXAngle(false, nullptr);
-    baseY = referenceGyroscope->getYAngle(true, nullptr);
-    baseZ = referenceGyroscope->getZAngle(false, nullptr);
-  }
-
   Serial.print("Angle X: ");
   Serial.print(getXAngle(false, referenceGyroscope));
-  Serial.print(", Plain X: ");
-  Serial.print(getXAngle(false, nullptr));
-  Serial.print(", Plain reference X: ");
-  Serial.print(baseX);
   Serial.print(", Angle Y: ");
-  Serial.print(getYAngle(true, nullptr));
+  Serial.print(getYAngle(true, referenceGyroscope));
   Serial.print(", Angle Z: ");
-  Serial.println(getZAngle(false, nullptr));
+  Serial.println(getZAngle(false, referenceGyroscope));
 }
 
 void Gyroscope::printValues(int length, Gyroscope* referenceGyroscope) {
@@ -128,27 +114,16 @@ float Gyroscope::getXAngle(bool invert, Gyroscope* referenceGyroscope) {
   float value = !invert ? angleX : -angleX;
   float referencedFixAngle = value - referenceAngleX;
 
-  // 2. Normalization to 0-360 deg
-  referencedFixAngle = fmod(referencedFixAngle, 360.0);
-  if (referencedFixAngle < 0) {
-    referencedFixAngle += 360.0;
-  }
-
+  // Serial.println(referencedFixAngle);
   if (referenceGyroscope == nullptr) {
+    if (referencedFixAngle > 180) {
+      return referencedFixAngle - 360;
+    }
     return referencedFixAngle;
   }
 
-  float refAngle = referenceGyroscope->getXAngle(invert, nullptr);
-
-  // Shortest angle path calculation
-  // When angle is 300 deg and ref angle is 40 deg relative angle should be 100 deg.
-  float diff = fabs(referencedFixAngle - refAngle);
-
-  if (diff > 180.0) {
-    diff = 360.0 - diff;  // If path is longer than half of circle go other way
-  }
-
-  return diff;
+  float referenceValue = referenceGyroscope->getXAngle();
+  return referencedFixAngle - referenceValue;
 }
 
 float Gyroscope::getYAngle(bool invert, Gyroscope* referenceGyroscope) {

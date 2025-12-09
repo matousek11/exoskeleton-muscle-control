@@ -53,7 +53,7 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
   } else if (command.equalsIgnoreCase("bdg")) {
     systemComponents.gyroscope->printValues(0, nullptr);
   } else if (command.equalsIgnoreCase("tdg")) {
-    systemComponents.upperGyroscope->printValues(0, systemComponents.gyroscope);
+    systemComponents.upperGyroscope->printValues(0, nullptr);
   } else if (command.equalsIgnoreCase("ia")) {
     Serial.println("Init axis");
     systemComponents.upperGyroscope->calibrateXAngle();
@@ -113,8 +113,8 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
 
     closeAllValves(systemComponents);
   } else if (command.equalsIgnoreCase("t-up-ant-dyn")) {
-    Serial.println("target -90;0, -10;0 degrees, -100;0 degrees and -10;0 degrees for upper leg");
-    ControlTarget targets[4] = {ControlTarget(0.0f, -90.0f, 0.0f), ControlTarget(0.25f, -10.0f, 0.0f),
+    Serial.println("target -30;0, -70;0 degrees, -100;0 and -10;0 degrees for upper leg");
+    ControlTarget targets[4] = {ControlTarget(0.0f, -30.0f, 0.0f), ControlTarget(0.25f, -70.0f, 0.0f),
                                 ControlTarget(0.5f, -100.0f, 0.0f), ControlTarget(0.75f, -10.0f, 0.0f)};
     systemComponents.antagonisticControlAlgorithm->controlMuscle(
         systemComponents.topFrontActuator, systemComponents.topBackActuator, systemComponents.gyroscope, 40000, targets,

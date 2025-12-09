@@ -30,7 +30,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
   unsigned long startTime = millis();
   setSpecificControlTargets(targets, number_of_targets, startTime, controlTime);
 
-  float targetYAngle = getTargetAngle();
+  float targetXAngle = getTargetAngle();
 
   float proportionalPart = 0;
   float integralPart = 0;
@@ -66,18 +66,18 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
 
     float currentAngle = 0;
     if (upperGyroscope == nullptr) {
-      currentAngle = gyroscope->getYAngle();
+      currentAngle = gyroscope->getXAngle();
     } else {
-      currentAngle = upperGyroscope->getYAngle(true);
+      currentAngle = upperGyroscope->getXAngle();
       Serial.println("Upper gyroscope:" + String(currentAngle));
-      float lowerGyroscopeAngle = gyroscope->getYAngle(true);
+      float lowerGyroscopeAngle = gyroscope->getXAngle();
       currentAngle -= lowerGyroscopeAngle;
       Serial.println("Lower gyroscope:" + String(lowerGyroscopeAngle));
       Serial.println(currentAngle);
     }
 
     // --- PID calculations ---
-    float error = targetYAngle - currentAngle;
+    float error = targetXAngle - currentAngle;
     if (abs(error) > targetTolerance) {  // do not calculate when in target tolerance
       integral += error * deltaTime;
       int clamp = 300;
@@ -136,7 +136,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
 
     // --- Debug info ---
     Serial.print("Target: ");
-    Serial.print(targetYAngle);
+    Serial.print(targetXAngle);
     Serial.print(" | Angle: ");
     Serial.print(currentAngle);
     Serial.print(" | Error: ");
@@ -161,7 +161,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
     Serial.print(" | Loop time (ms): ");
     Serial.println(millis() - loopStartTime);
 
-    targetYAngle = getTargetAngle();
+    targetXAngle = getTargetAngle();
     isFirstCycle = false;
   }
 
