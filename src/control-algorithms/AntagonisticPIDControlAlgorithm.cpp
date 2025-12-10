@@ -19,7 +19,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
   const float valveOpenTimeClamp = 300;
 
   // --- Control setup ---
-  const int loopDelay = 50;  // PID update every 50ms
+  const int loopDelay = 0;  // PID update every 50ms
   unsigned long previousTime = millis();
 
   float integral = 0.0f;
@@ -59,6 +59,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
     for (int i = 0; i < 30; i++) {
       if (upperGyroscope != nullptr) {
         upperGyroscope->updateValues(gyroscope);
+        gyroscope->updateValues();
       } else {
         gyroscope->updateValues();
       }
@@ -69,11 +70,11 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
       currentAngle = gyroscope->getXAngle();
     } else {
       currentAngle = upperGyroscope->getXAngle();
-      Serial.println("Upper gyroscope:" + String(currentAngle));
+      //Serial.println("Upper gyroscope:" + String(currentAngle));
       float lowerGyroscopeAngle = gyroscope->getXAngle();
       currentAngle -= lowerGyroscopeAngle;
-      Serial.println("Lower gyroscope:" + String(lowerGyroscopeAngle));
-      Serial.println(currentAngle);
+      //Serial.println("Lower gyroscope:" + String(lowerGyroscopeAngle));
+      //Serial.println(currentAngle);
     }
 
     // --- PID calculations ---

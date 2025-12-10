@@ -92,7 +92,7 @@ void TwoDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(Actuator*
     }
 
     // ---- Lateral control calculation part
-    float currentLateralAngle = gyroscope->getYAngle();
+    float currentLateralAngle = gyroscope->getXAngle();
 
     // --- PID calculations ---
     float lateralAngleError = lateralTargetAngle - currentLateralAngle;
@@ -155,7 +155,7 @@ void TwoDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(Actuator*
     // ---- Longitudinal control calculation part
     currentTime = millis();
     float longitudinalDeltaTime = (currentTime - previousLongitudinalTime) / 1000.0f;  // seconds
-    float currentLongitudinalAngle = gyroscope->getXAngle();
+    float currentLongitudinalAngle = gyroscope->getYAngle(true);
 
     // --- PID calculations ---
     float longitudinalAngleError = longitudinalTargetAngle - currentLongitudinalAngle;
@@ -199,9 +199,9 @@ void TwoDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(Actuator*
           rightBackActuatorOutput += abs(longitudinalOutput);
           // counter changes for another axis
           if (lateralAngleError > 0) {
-            leftFrontActuatorOutput += abs(longitudinalOutput) * 0.4;
+            leftFrontActuatorOutput += abs(longitudinalOutput) * 0.3;
           } else if (lateralAngleError < -0) {
-            leftBackActuatorOutput += abs(longitudinalOutput) * 0.4;
+            leftBackActuatorOutput += abs(longitudinalOutput) * 0.3;
           }
 
           leftFrontActuatorOutput -= abs(longitudinalOutput) * 1.1;
@@ -217,9 +217,9 @@ void TwoDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(Actuator*
           rightBackActuatorOutput -= abs(longitudinalOutput) * 1.2;
           // counter changes for another axis
           if (lateralAngleError > 0) {
-            rightFrontActuatorOutput += abs(longitudinalOutput) * 0.4;
+            rightFrontActuatorOutput += abs(longitudinalOutput) * 0.3;
           } else if (lateralAngleError < 0) {
-            rightBackActuatorOutput += abs(longitudinalOutput) * 0.4;
+            rightBackActuatorOutput += abs(longitudinalOutput) * 0.3;
           }
 
           leftFrontActuatorOutput += abs(longitudinalOutput);

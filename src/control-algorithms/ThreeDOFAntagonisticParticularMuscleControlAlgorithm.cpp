@@ -16,7 +16,7 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
   const float lateralTargetTolerance = 4;
   const float longitudinalTargetTolerance = 6;
   const float valveOpenTimeClamp = 300;
-  const int loopDelay = 50;  // PID update every 50ms
+  const int loopDelay = 0;  // PID update every 50ms
   unsigned long startTime = millis();
 
   setSpecificControlTargets(lowerLegTargets, numberOfLowerLegTargets, startTime, controlTime);
@@ -44,9 +44,9 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
   float lateralOutput = 0;
 
   // ----- Longitudinal PID init -----
-  const float longitudinalKp = 0.1f;    // Proportional gain
-  const float longitudinalKi = 0.24f;   // Integral gain
-  const float longitudinalKd = 0.005f;  // Derivative gain
+  const float longitudinalKp = 0.05f;    // Proportional gain
+  const float longitudinalKi = 0.20f;   // Integral gain
+  const float longitudinalKd = 0.003f;  // Derivative gain
 
   // --- Control setup ---
   unsigned long previousLongitudinalTime = millis();
@@ -118,7 +118,7 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
     }
 
     // ---- Lateral control calculation part
-    float currentLowerLegLateralAngle = lowerGyroscope->getYAngle();
+    float currentLowerLegLateralAngle = lowerGyroscope->getXAngle();
 
     // --- PID calculations ---
     float lateralAngleError = lateralTargetAngle - currentLowerLegLateralAngle;
@@ -181,7 +181,7 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
     // ---- Longitudinal control calculation part
     currentTime = millis();
     float longitudinalDeltaTime = (currentTime - previousLongitudinalTime) / 1000.0f;  // seconds
-    float currentLowerLegLongitudinalAngle = lowerGyroscope->getXAngle();
+    float currentLowerLegLongitudinalAngle = lowerGyroscope->getYAngle(true);
 
     // --- PID calculations ---
     float longitudinalAngleError = longitudinalTargetAngle - currentLowerLegLongitudinalAngle;
@@ -225,9 +225,9 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
           rightBackActuatorOutput += abs(longitudinalOutput);
           // counter changes for another axis
           if (lateralAngleError > 0) {
-            leftFrontActuatorOutput += abs(longitudinalOutput) * 0.4;
+            leftFrontActuatorOutput += abs(longitudinalOutput) * 0.6;
           } else if (lateralAngleError < -0) {
-            leftBackActuatorOutput += abs(longitudinalOutput) * 0.4;
+            leftBackActuatorOutput += abs(longitudinalOutput) * 0.6;
           }
 
           leftFrontActuatorOutput -= abs(longitudinalOutput) * 1.1;
@@ -243,9 +243,9 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
           rightBackActuatorOutput -= abs(longitudinalOutput) * 1.2;
           // counter changes for another axis
           if (lateralAngleError > 0) {
-            rightFrontActuatorOutput += abs(longitudinalOutput) * 0.4;
+            rightFrontActuatorOutput += abs(longitudinalOutput) * 0.6;
           } else if (lateralAngleError < 0) {
-            rightBackActuatorOutput += abs(longitudinalOutput) * 0.4;
+            rightBackActuatorOutput += abs(longitudinalOutput) * 0.6;
           }
 
           leftFrontActuatorOutput += abs(longitudinalOutput);
@@ -287,7 +287,8 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
     // ---- Upper leg lateral control calculation part
     currentTime = millis();
     float upperLegLateralDeltaTime = (currentTime - previousUpperLegLateralTime) / 1000.0f;  // seconds
-    float currentUpperLegLateralAngle = upperGyroscope->getYAngle(lowerGyroscope);
+    float currentUpperLegLateralAngle = upperGyroscope->getXAngle();
+    currentUpperLegLateralAngle -= lowerGyroscope->getXAngle();
 
     // --- PID calculations ---
     float upperLegLateralAngleError = upperLegLateralTargetAngle - currentUpperLegLateralAngle;
@@ -330,7 +331,7 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
           // Increase angle (move forward)
           topFrontActuator->addPressureFluidlyWithOutflowValve(abs(upperLegLateralOutput));
           topBackActuator->releasePressureFluidlyWithInputValve(abs(upperLegLateralOutput) * 1.2);
-        } else if (abs(lateralAngleError) > lateralTargetTolerance && lateralOutput < 0) {
+        } else if (abs(upperLegLateralAngleError) > lateralTargetTolerance && upperLegLateralOutput < 0) {
           // move backward
           if (abs(upperLegLateralOutput) > valveOpenTimeClamp) {  // upper clamp
             upperLegLateralOutput = -valveOpenTimeClamp;
@@ -339,6 +340,12 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
           // Decrease angle (move backward)
           topFrontActuator->releasePressureFluidlyWithInputValve(abs(upperLegLateralOutput) * 1.2);
           topBackActuator->addPressureFluidlyWithOutflowValve(abs(upperLegLateralOutput));
+        } else {
+          // Small correction area — hold position
+          topFrontActuator->closeInput();
+          topFrontActuator->closeOutput();
+          topBackActuator->closeInput();
+          topBackActuator->closeOutput();
         }
       }
     }
