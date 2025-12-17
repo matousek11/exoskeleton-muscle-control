@@ -134,10 +134,13 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(StateMachineActuator* forwar
       }
     }
 
-    forwardActuator->updateStateMachine();
-    backwardActuator->updateStateMachine();
+    while (forwardActuator->isBusy() || backwardActuator->isBusy()) {
+      forwardActuator->updateStateMachine();
+      backwardActuator->updateStateMachine();
+    }
+    
 
-    if (millis() - lastDataPrint > 200) {
+    if (now - lastDataPrint > 100) {
       // --- Debug info ---
       Serial.print("Target: ");
       Serial.print(targetXAngle);

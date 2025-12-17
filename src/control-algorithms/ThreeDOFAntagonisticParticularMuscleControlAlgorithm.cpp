@@ -8,8 +8,8 @@ ThreeDOFAntagonisticParticularMuscleControlAlgorithm::ThreeDOFAntagonisticPartic
 }
 
 void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
-    Actuator* leftBottomFrontActuator, Actuator* rightBottomFrontActuator, Actuator* leftBottomBackActuator,
-    Actuator* rightBottomBackActuator, Actuator* topFrontActuator, Actuator* topBackActuator, Gyroscope* lowerGyroscope,
+    StateMachineActuator* leftBottomFrontActuator, StateMachineActuator* rightBottomFrontActuator, StateMachineActuator* leftBottomBackActuator,
+    StateMachineActuator* rightBottomBackActuator, StateMachineActuator* topFrontActuator, StateMachineActuator* topBackActuator, Gyroscope* lowerGyroscope,
     Gyroscope* upperGyroscope, unsigned long controlTime, ControlTarget lowerLegTargets[],
     size_t numberOfLowerLegTargets, ControlTarget upperLegTargets[], size_t numberOfUpperLegTargets) {
   // Common init vars
@@ -83,6 +83,7 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
   float upperLegLateralIntegralPart = 0;
   float upperLegLateralDerivativePart = 0;
   float upperLegLateralOutput = 0;
+  unsigned long lastDataPrint = 0;
 
   Serial.println("Starting 3 DOF particular muscle PID control for 20s...");
   while (millis() - startTime < (unsigned long)controlTime) {
@@ -97,6 +98,12 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
       char c = Serial.read();
       if (c == 'c') {
         Serial.println("--- Emergency stop ---");
+        leftBottomFrontActuator->cancel();
+        rightBottomFrontActuator->cancel();
+        leftBottomBackActuator->cancel();
+        rightBottomBackActuator->cancel();
+        topFrontActuator->cancel();
+        topBackActuator->cancel();
         leftBottomFrontActuator->extend();
         rightBottomFrontActuator->extend();
         leftBottomBackActuator->extend();
@@ -112,7 +119,7 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
     float lateralDeltaTime = (currentTime - previousLateralTime) / 1000.0f;  // seconds
 
     // --- Read current angle ---
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 2; i++) {
       lowerGyroscope->updateValues();
       upperGyroscope->updateValues();
     }
@@ -256,30 +263,30 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
 
     if (leftFrontActuatorOutput != 0) {
       leftFrontActuatorOutput > 0
-          ? leftBottomFrontActuator->addPressureFluidlyWithOutflowValve(leftFrontActuatorOutput)
-          : leftBottomFrontActuator->releasePressureFluidlyWithInputValve(abs(leftFrontActuatorOutput));
+          ? leftBottomFrontActuator->startAddPressure(leftFrontActuatorOutput)
+          : leftBottomFrontActuator->startReleasePressure(abs(leftFrontActuatorOutput));
     }
 
     if (rightFrontActuatorOutput != 0) {
       rightFrontActuatorOutput > 0
-          ? rightBottomFrontActuator->addPressureFluidlyWithOutflowValve(rightFrontActuatorOutput)
-          : rightBottomFrontActuator->releasePressureFluidlyWithInputValve(abs(rightFrontActuatorOutput));
+          ? rightBottomFrontActuator->startAddPressure(rightFrontActuatorOutput)
+          : rightBottomFrontActuator->startReleasePressure(abs(rightFrontActuatorOutput));
     }
 
     if (leftBackActuatorOutput != 0) {
       leftBackActuatorOutput > 0
-          ? leftBottomBackActuator->addPressureFluidlyWithOutflowValve(leftBackActuatorOutput)
-          : leftBottomBackActuator->releasePressureFluidlyWithInputValve(abs(leftBackActuatorOutput));
+          ? leftBottomBackActuator->startAddPressure(leftBackActuatorOutput)
+          : leftBottomBackActuator->startReleasePressure(abs(leftBackActuatorOutput));
     }
 
     if (rightBackActuatorOutput != 0) {
       rightBackActuatorOutput > 0
-          ? rightBottomBackActuator->addPressureFluidlyWithOutflowValve(rightBackActuatorOutput)
-          : rightBottomBackActuator->releasePressureFluidlyWithInputValve(abs(rightBackActuatorOutput));
+          ? rightBottomBackActuator->startAddPressure(rightBackActuatorOutput)
+          : rightBottomBackActuator->startReleasePressure(abs(rightBackActuatorOutput));
     }
 
     // --- Read current angle ---
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 1; i++) {
       lowerGyroscope->updateValues();
       upperGyroscope->updateValues();
     }
@@ -329,8 +336,8 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
           }
 
           // Increase angle (move forward)
-          topFrontActuator->addPressureFluidlyWithOutflowValve(abs(upperLegLateralOutput));
-          topBackActuator->releasePressureFluidlyWithInputValve(abs(upperLegLateralOutput) * 1.2);
+          topFrontActuator->startAddPressure(abs(upperLegLateralOutput));
+          topBackActuator->startReleasePressure(abs(upperLegLateralOutput) * 1.2);
         } else if (abs(upperLegLateralAngleError) > lateralTargetTolerance && upperLegLateralOutput < 0) {
           // move backward
           if (abs(upperLegLateralOutput) > valveOpenTimeClamp) {  // upper clamp
@@ -338,8 +345,8 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
           }
 
           // Decrease angle (move backward)
-          topFrontActuator->releasePressureFluidlyWithInputValve(abs(upperLegLateralOutput) * 1.2);
-          topBackActuator->addPressureFluidlyWithOutflowValve(abs(upperLegLateralOutput));
+          topFrontActuator->startReleasePressure(abs(upperLegLateralOutput) * 1.2);
+          topBackActuator->startAddPressure(abs(upperLegLateralOutput));
         } else {
           // Small correction area — hold position
           topFrontActuator->closeInput();
@@ -350,59 +357,78 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
       }
     }
 
-    // --- Debug info ---
-    Serial.print("Target: ");
-    Serial.print(lateralTargetAngle);
-    Serial.print(" | Angle: ");
-    Serial.print(currentLowerLegLateralAngle);
-    Serial.print(" | Error: ");
-    Serial.print(lateralAngleError);
-    Serial.print(" | Output: ");
-    Serial.print(lateralOutput);
-    Serial.print(" | Time (ms): ");
-    Serial.print(currentTime);
-    Serial.print(" | Prop: ");
-    Serial.print(lateralProportionalPart);
-    Serial.print(" | Der: ");
-    Serial.print(lateralDerivativePart);
-    Serial.print(" | Int: ");
-    Serial.print(lateralIntegralPart);
-    Serial.print(" | Long target: ");
-    Serial.print(longitudinalTargetAngle);
-    Serial.print(" | Long angle: ");
-    Serial.print(currentLowerLegLongitudinalAngle);
-    Serial.print(" | Long error: ");
-    Serial.print(longitudinalAngleError);
-    Serial.print(" | Long output: ");
-    Serial.print(longitudinalOutput);
-    Serial.print(" | Long prop: ");
-    Serial.print(longitudinalProportionalPart);
-    Serial.print(" | Long der: ");
-    Serial.print(longitudinalDerivativePart);
-    Serial.print(" | Long int: ");
-    Serial.print(longitudinalIntegralPart);
-    Serial.print(" | left bottom front muscle open(ms): ");
-    Serial.print(leftFrontActuatorOutput);
-    Serial.print(" | right bottom front muscle open(ms): ");
-    Serial.print(rightFrontActuatorOutput);
-    Serial.print(" | left bottom back muscle open(ms): ");
-    Serial.print(leftBackActuatorOutput);
-    Serial.print(" | right bottom back muscle open(ms): ");
-    Serial.print(rightBackActuatorOutput);
-    Serial.print(" | Upper leg lateral target: ");
-    Serial.print(upperLegLateralTargetAngle);
-    Serial.print(" | Upper leg lateral angle: ");
-    Serial.print(currentUpperLegLateralAngle);
-    Serial.print(" | Upper leg lateral error: ");
-    Serial.print(upperLegLateralAngleError);
-    Serial.print(" | Upper leg lateral output: ");
-    Serial.print(upperLegLateralOutput);
-    Serial.print(" | Upper leg lateral prop: ");
-    Serial.print(upperLegLateralProportionalPart);
-    Serial.print(" | Upper leg lateral der: ");
-    Serial.print(upperLegLateralDerivativePart);
-    Serial.print(" | Upper leg lateral int: ");
-    Serial.print(upperLegLateralIntegralPart);
+    while (
+      topFrontActuator->isBusy() || topBackActuator->isBusy()
+      || leftBottomFrontActuator->isBusy() || rightBottomFrontActuator->isBusy()
+      || leftBottomBackActuator->isBusy() || rightBottomBackActuator->isBusy()
+    ) {
+      topFrontActuator->updateStateMachine();
+      topBackActuator->updateStateMachine();
+      leftBottomFrontActuator->updateStateMachine();
+      rightBottomFrontActuator->updateStateMachine();
+      leftBottomBackActuator->updateStateMachine();
+      rightBottomBackActuator->updateStateMachine();
+    }
+
+    if (millis() - lastDataPrint > 100) {
+      // --- Debug info ---
+      Serial.print("Target: ");
+      Serial.print(lateralTargetAngle);
+      Serial.print(" | Angle: ");
+      Serial.print(currentLowerLegLateralAngle);
+      Serial.print(" | Error: ");
+      Serial.print(lateralAngleError);
+      Serial.print(" | Output: ");
+      Serial.print(lateralOutput);
+      Serial.print(" | Time (ms): ");
+      Serial.print(currentTime);
+      Serial.print(" | Prop: ");
+      Serial.print(lateralProportionalPart);
+      Serial.print(" | Der: ");
+      Serial.print(lateralDerivativePart);
+      Serial.print(" | Int: ");
+      Serial.print(lateralIntegralPart);
+      Serial.print(" | Long target: ");
+      Serial.print(longitudinalTargetAngle);
+      Serial.print(" | Long angle: ");
+      Serial.print(currentLowerLegLongitudinalAngle);
+      Serial.print(" | Long error: ");
+      Serial.print(longitudinalAngleError);
+      Serial.print(" | Long output: ");
+      Serial.print(longitudinalOutput);
+      Serial.print(" | Long prop: ");
+      Serial.print(longitudinalProportionalPart);
+      Serial.print(" | Long der: ");
+      Serial.print(longitudinalDerivativePart);
+      Serial.print(" | Long int: ");
+      Serial.print(longitudinalIntegralPart);
+      Serial.print(" | left bottom front muscle open(ms): ");
+      Serial.print(leftFrontActuatorOutput);
+      Serial.print(" | right bottom front muscle open(ms): ");
+      Serial.print(rightFrontActuatorOutput);
+      Serial.print(" | left bottom back muscle open(ms): ");
+      Serial.print(leftBackActuatorOutput);
+      Serial.print(" | right bottom back muscle open(ms): ");
+      Serial.print(rightBackActuatorOutput);
+      Serial.print(" | Upper leg lateral target: ");
+      Serial.print(upperLegLateralTargetAngle);
+      Serial.print(" | Upper leg lateral angle: ");
+      Serial.print(currentUpperLegLateralAngle);
+      Serial.print(" | Upper leg lateral error: ");
+      Serial.print(upperLegLateralAngleError);
+      Serial.print(" | Upper leg lateral output: ");
+      Serial.print(upperLegLateralOutput);
+      Serial.print(" | Upper leg lateral prop: ");
+      Serial.print(upperLegLateralProportionalPart);
+      Serial.print(" | Upper leg lateral der: ");
+      Serial.print(upperLegLateralDerivativePart);
+      Serial.print(" | Upper leg lateral int: ");
+      Serial.print(upperLegLateralIntegralPart);
+      Serial.print(" | Loop time (ms): ");
+      Serial.println(millis() - loopStartTime);
+
+      lastDataPrint = millis();
+    }
 
     // Prepare for next iteration
     previousLateralError = lateralAngleError;
@@ -411,11 +437,6 @@ void ThreeDOFAntagonisticParticularMuscleControlAlgorithm::controlMuscle(
     previousLongitudinalTime = currentTime;
     previousUpperLegLateralError = upperLegLateralAngleError;
     previousUpperLegLateralTime = currentTime;
-
-    delay(loopDelay);
-
-    Serial.print(" | Loop time (ms): ");
-    Serial.println(millis() - loopStartTime);
 
     lateralTargetAngle = getLowerLegLateralTargetAngle();
     longitudinalTargetAngle = getLowerLegLongitudinalTargetAngle();

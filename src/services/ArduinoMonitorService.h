@@ -29,6 +29,10 @@ struct SystemComponents {
   StateMachineActuator* stateMachineBackActuator;
   StateMachineActuator* stateMachineTopFrontActuator;
   StateMachineActuator* stateMachineTopBackActuator;
+  StateMachineActuator* stateMachineLeftFrontActuator;
+  StateMachineActuator* stateMachineRightFrontActuator;
+  StateMachineActuator* stateMachineLeftBackActuator;
+  StateMachineActuator* stateMachineRightBackActuator;
 
   Actuator* frontActuator;
   Actuator* backActuator;

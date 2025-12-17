@@ -107,8 +107,8 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
     ControlTarget upperLegTargets[4] = {ControlTarget(0.0f, -90.0f, 0.0f), ControlTarget(0.25f, -10.0f, 0.0f),
                                         ControlTarget(0.5f, -100.0f, 0.0f), ControlTarget(0.75f, -10.0f, 0.0f)};
     systemComponents.threeDOFAntagonisticParticularMuscleControlAlgorithm->controlMuscle(
-        systemComponents.leftFrontActuator, systemComponents.rightFrontActuator, systemComponents.leftBackActuator,
-        systemComponents.rightBackActuator, systemComponents.topFrontActuator, systemComponents.topBackActuator,
+        systemComponents.stateMachineLeftFrontActuator, systemComponents.stateMachineRightFrontActuator, systemComponents.stateMachineLeftBackActuator,
+        systemComponents.stateMachineRightBackActuator, systemComponents.stateMachineTopFrontActuator, systemComponents.stateMachineTopBackActuator,
         systemComponents.gyroscope, systemComponents.upperGyroscope, 60000, lowerLegTargets, 4, upperLegTargets, 4);
 
     closeAllValves(systemComponents);

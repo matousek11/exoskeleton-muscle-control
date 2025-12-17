@@ -2,6 +2,7 @@
 #define THREEDOFANTAGONISTICPARTICULARMUSCLECONTROLALGORITHM_H_
 
 #include "./../models/Actuator.h"
+#include "./../models/StateMachineActuator.h"
 #include "./../models/ControlTarget.h"
 #include "./../models/Gyroscope.h"
 #include "./../models/SpecificControlTarget.h"
@@ -67,9 +68,9 @@ class ThreeDOFAntagonisticParticularMuscleControlAlgorithm {
    * @param upperLegTargets consists of upper leg angle targets that should algorithm go to in order
    * @param numberOfUpperLegTargets number of upper leg angle targets in array
    */
-  void controlMuscle(Actuator* leftBottomFrontActuator, Actuator* rightBottomFrontActuator,
-                     Actuator* leftBottomBackActuator, Actuator* rightBottomBackActuator,
-                     Actuator* topBottomFrontActuator, Actuator* topBackActuator, Gyroscope* lowerGyroscope,
+  void controlMuscle(StateMachineActuator* leftBottomFrontActuator, StateMachineActuator* rightBottomFrontActuator,
+                     StateMachineActuator* leftBottomBackActuator, StateMachineActuator* rightBottomBackActuator,
+                     StateMachineActuator* topBottomFrontActuator, StateMachineActuator* topBackActuator, Gyroscope* lowerGyroscope,
                      Gyroscope* upperGyroscope, unsigned long controlTime, ControlTarget lowerLegTargets[],
                      size_t numberOfLowerLegTargets, ControlTarget upperLegTargets[], size_t numberOfUpperLegTargets);
 

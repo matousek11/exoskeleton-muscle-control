@@ -68,7 +68,7 @@ void setup() {
                                        valveFactory->createValve(1, ValveType::OUTLET, 0X60));
 
   // Upper leg actuators initialization
-  topFrontInletValves[0] = valveFactory->createValve(12, ValveType::INLET);
+  topFrontInletValves[0] = valveFactory->createValve(5, ValveType::INLET);
   topFrontOutletValves[0] = valveFactory->createValve(3, ValveType::OUTLET, 0x61);
   systemComponents.topFrontActuator = new Actuator(topFrontInletValves, 1, topFrontOutletValves, 1);
   systemComponents.stateMachineTopFrontActuator =
@@ -111,18 +111,22 @@ void setup() {
   leftFrontInletValves[0] = valveFactory->createValve(13, ValveType::INLET);
   leftFrontOutletValves[0] = valveFactory->createValve(1, ValveType::OUTLET, 0x60);
   systemComponents.leftFrontActuator = new Actuator(leftFrontInletValves, 1, leftFrontOutletValves, 1);
+  systemComponents.stateMachineLeftFrontActuator = new StateMachineActuator(leftFrontInletValves, 1, leftFrontOutletValves, 1);
 
   rightFrontInletValves[0] = valveFactory->createValve(4, ValveType::INLET, 0x60);
   rightFrontOutletValves[0] = valveFactory->createValve(3, ValveType::OUTLET, 0x60);
   systemComponents.rightFrontActuator = new Actuator(rightFrontInletValves, 1, rightFrontOutletValves, 1);
+  systemComponents.stateMachineRightFrontActuator = new StateMachineActuator(rightFrontInletValves, 1, rightFrontOutletValves, 1);
 
   leftBackInletValves[0] = valveFactory->createValve(4, ValveType::INLET);
   leftBackOutletValves[0] = valveFactory->createValve(6, ValveType::OUTLET);
   systemComponents.leftBackActuator = new Actuator(leftBackInletValves, 1, leftBackOutletValves, 1);
+  systemComponents.stateMachineLeftBackActuator = new StateMachineActuator(leftBackInletValves, 1, leftBackOutletValves, 1);
 
   rightBackInletValves[0] = valveFactory->createValve(10, ValveType::INLET);
   rightBackOutletValves[0] = valveFactory->createValve(7, ValveType::OUTLET);
   systemComponents.rightBackActuator = new Actuator(rightBackInletValves, 1, rightBackOutletValves, 1);
+  systemComponents.stateMachineRightBackActuator = new StateMachineActuator(rightBackInletValves, 1, rightBackOutletValves, 1);
 
   arduinoMonitorService->printPossibleCommands(nullptr);
 }

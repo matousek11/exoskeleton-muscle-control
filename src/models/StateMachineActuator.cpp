@@ -51,10 +51,6 @@ void StateMachineActuator::retract() {
 }
 
 void StateMachineActuator::startAddPressure(int pressureTime) {
-  // Quantize pressure time to loop resolution for predictable timing
-  pressureTime = ((pressureTime + LOOP_TIME - 1) / LOOP_TIME) * LOOP_TIME;
-  if (pressureTime < LOOP_TIME) pressureTime = LOOP_TIME;
-  
   // Store requested pressure time
   requestedPressureTime = pressureTime;
 
@@ -86,10 +82,6 @@ void StateMachineActuator::startAddPressure(int pressureTime) {
 }
 
 void StateMachineActuator::startReleasePressure(int pressureTime) {
-  // Quantize pressure time to loop resolution for predictable timing
-  pressureTime = ((pressureTime + LOOP_TIME - 1) / LOOP_TIME) * LOOP_TIME;
-  if (pressureTime < LOOP_TIME) pressureTime = LOOP_TIME;
-  
   // Store requested pressure time
   requestedPressureTime = pressureTime;
 
