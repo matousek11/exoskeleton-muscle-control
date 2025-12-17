@@ -20,7 +20,6 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(StateMachineActuator* forwar
   const float valveOpenTimeClamp = 300;
 
   // --- Control setup ---
-  const int loopDelay = 0;  // PID update every 50ms
   unsigned long previousTime = millis();
   unsigned long lastDataPrint = millis();
 
@@ -57,7 +56,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(StateMachineActuator* forwar
     }
 
     unsigned long now = millis();
-    float deltaTime = (now - previousTime) / 1000.0f;  // seconds
+    float deltaTime = (now - previousTime) * 0.001f;
 
     // --- Read current angle ---
     if (upperGyroscope != nullptr) {
@@ -162,8 +161,6 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(StateMachineActuator* forwar
       lastDataPrint = millis();
     }
 
-    // delay(loopDelay);
-
     // Prepare for next iteration
     previousError = error;
     previousTime = now;
@@ -173,14 +170,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(StateMachineActuator* forwar
   }
 
   Serial.println(F("End of control"));
-  Serial.print(F("Deleting targets, count: "));
-  Serial.println(numberOfTargets);
-  Serial.print(F("specificControlTargets ptr: "));
-  Serial.println((unsigned long)specificControlTargets, HEX);
-
   deleteTargets();
-
-  Serial.println(F("Targets deleted successfully"));
 }
 
 float AntagonisticPIDControlAlgorithm::getTargetAngle() {
@@ -219,22 +209,13 @@ void AntagonisticPIDControlAlgorithm::setSpecificControlTargets(ControlTarget ta
 }
 
 void AntagonisticPIDControlAlgorithm::deleteTargets() {
-  Serial.println(F("DEBUG: deleteTargets() called"));
   if (specificControlTargets != nullptr) {
-    Serial.print(F("DEBUG: Deleting "));
-    Serial.print(numberOfTargets);
-    Serial.println(F(" targets"));
     for (size_t i = 0; i < numberOfTargets; ++i) {
-      Serial.print(F("DEBUG: Deleting target "));
-      Serial.println(i);
       delete specificControlTargets[i];
     }
-    Serial.println(F("DEBUG: Deleting array"));
     delete[] specificControlTargets;
     specificControlTargets = nullptr;
-    Serial.println(F("DEBUG: Array deleted"));
   }
-  Serial.println(F("DEBUG: deleteTargets() complete"));
 }
 
 AntagonisticPIDControlAlgorithm::~AntagonisticPIDControlAlgorithm() {

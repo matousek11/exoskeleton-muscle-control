@@ -51,6 +51,10 @@ void StateMachineActuator::retract() {
 }
 
 void StateMachineActuator::startAddPressure(int pressureTime) {
+  // Quantize pressure time to loop resolution for predictable timing
+  pressureTime = ((pressureTime + LOOP_TIME - 1) / LOOP_TIME) * LOOP_TIME;
+  if (pressureTime < LOOP_TIME) pressureTime = LOOP_TIME;
+  
   // Store requested pressure time
   requestedPressureTime = pressureTime;
 
@@ -60,8 +64,8 @@ void StateMachineActuator::startAddPressure(int pressureTime) {
     if (pressureTime < SHORT_THRESHOLD) {
       // Very short: use drain valve
       useShortDrain = true;
-      drainOpenTime = OPEN_TIME + 0.2 * pressureTime;
-      calculatedPressureTime = pressureTime;  // Keep original for very short
+      drainOpenTime = OPEN_TIME + (pressureTime / 5);  // Integer math
+      calculatedPressureTime = pressureTime;
     } else {
       // Short but not very short: extend pressure time
       useShortDrain = false;
@@ -82,6 +86,10 @@ void StateMachineActuator::startAddPressure(int pressureTime) {
 }
 
 void StateMachineActuator::startReleasePressure(int pressureTime) {
+  // Quantize pressure time to loop resolution for predictable timing
+  pressureTime = ((pressureTime + LOOP_TIME - 1) / LOOP_TIME) * LOOP_TIME;
+  if (pressureTime < LOOP_TIME) pressureTime = LOOP_TIME;
+  
   // Store requested pressure time
   requestedPressureTime = pressureTime;
 
@@ -91,8 +99,8 @@ void StateMachineActuator::startReleasePressure(int pressureTime) {
     if (pressureTime < SHORT_THRESHOLD) {
       // Very short: use drain valve (input in this case)
       useShortDrain = true;
-      drainOpenTime = OPEN_TIME + 0.2 * pressureTime;
-      calculatedPressureTime = pressureTime;  // Keep original for very short
+      drainOpenTime = OPEN_TIME + (pressureTime / 5);  // Integer math
+      calculatedPressureTime = pressureTime;
     } else {
       // Short but not very short: extend pressure time
       useShortDrain = false;
@@ -117,7 +125,11 @@ bool StateMachineActuator::updateStateMachine() {
     return false;  // Nothing to do
   }
 
-  unsigned long elapsed = millis() - stateStartTimestamp;
+  unsigned long now = millis();
+  unsigned long elapsed = now - stateStartTimestamp;
+  
+  // Use >= for timing comparisons to handle loop timing variations
+  // This ensures we don't miss timing windows even with variable loop times
 
   if (operationType == OP_PRESSURIZE) {
     switch (actionState) {

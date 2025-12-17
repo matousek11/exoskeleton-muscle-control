@@ -43,10 +43,10 @@ static IValve* rightBackOutletValves[1];
 
 void setup() {
   // setup communication speed with terminal
-  Serial.begin(115200);
+  Serial.begin(500000);
   // needed for MPU6050 readings and I2C scanner
   Wire.begin();
-  Wire.setClock(400000);
+  Wire.setClock(1000000);
 
   arduinoMonitorService = new ArduinoMonitorService();
   valveFactory = new ValveFactory();

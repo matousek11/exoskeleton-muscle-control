@@ -81,10 +81,7 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
         systemComponents.stateMachineFrontActuator, systemComponents.stateMachineBackActuator,
         systemComponents.gyroscope, 23000, targets, 4, nullptr);
 
-    Serial.println(F("DEBUG: Returned from controlMuscle"));
-    Serial.println(F("DEBUG: About to close all valves"));
     closeAllValves(systemComponents);
-    Serial.println(F("DEBUG: All valves closed"));
   } else if (command.equalsIgnoreCase("t-ant-dyn-2-dof")) {
     Serial.println("target -20;0, 0;0 degrees, 10;0 degrees and -10;0 degrees");
     ControlTarget targets[4] = {ControlTarget(0.0f, 70.0f, 0.0f), ControlTarget(0.25f, 90.0f, 0.0f),

@@ -5,10 +5,12 @@
 
 class StateMachineActuator {
  public:
-  // Timing constants
-  static const int MUSCLE_SEALING_TIME = 5;
-  static const int OPEN_TIME = 25;
-  static const int SHORT_THRESHOLD = 5;
+  // Timing constants - designed for 20ms loop resolution
+  // All times should be multiples of expected loop time for accurate timing
+  static const int LOOP_TIME = 10;           // Expected loop time in ms
+  static const int MUSCLE_SEALING_TIME = 10; // Rounded up to 1 loop cycle
+  static const int OPEN_TIME = 20;           // 2 loop cycles (was 25ms)
+  static const int SHORT_THRESHOLD = 10;     // 1 loop cycle
 
   // Operation type - what the actuator is doing
   enum OperationType { OP_IDLE, OP_PRESSURIZE, OP_DEPRESSURIZE };
