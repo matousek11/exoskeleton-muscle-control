@@ -9,12 +9,16 @@ MotorShieldValve::MotorShieldValve(int motorNumber, ValveType type, Adafruit_Mot
 
   valve = motorShield->getMotor(motorNumber);
   if (!valve) {
-    Serial.print("Failed to get motor.");
+    Serial.print(F("Failed to get motor."));
     while (1);
   }
   valve->setSpeed(255);
 
-  Serial.print(getType() + " initialiazed, motor number:" + String(this->controlPin) + " on board with address: ");
+  // Avoid String concatenation to prevent heap fragmentation
+  Serial.print(getTypeChar());
+  Serial.print(F(" initialized, motor number: "));
+  Serial.print(this->controlPin);
+  Serial.print(F(" on board with address: "));
   Serial.println(addrOfMotorShield, HEX);
 }
 
@@ -22,18 +26,26 @@ void MotorShieldValve::open() {
   valve->run(FORWARD);
   valveIsOpen = true;
 
-  Serial.print("PHYSICAL MOVEMENT: Opening " + getType() + ", motor: " + String(controlPin) +
-               " on board with address: ");
-  Serial.println(addrOfMotorShield, HEX);
+  // Avoid String concatenation to prevent heap fragmentation
+  // Serial.print(F("PHYSICAL MOVEMENT: Opening "));
+  // Serial.print(getTypeChar());
+  // Serial.print(F(", motor: "));
+  // Serial.print(controlPin);
+  // Serial.print(F(" on board with address: "));
+  // Serial.println(addrOfMotorShield, HEX);
 }
 
 void MotorShieldValve::close() {
   valve->run(RELEASE);
   valveIsOpen = false;
 
-  Serial.print("PHYSICAL MOVEMENT: Closing " + getType() + ", motor: " + String(controlPin) +
-               " on board with address: ");
-  Serial.println(addrOfMotorShield, HEX);
+  // Avoid String concatenation to prevent heap fragmentation
+  // Serial.print(F("PHYSICAL MOVEMENT: Closing "));
+  // Serial.print(getTypeChar());
+  // Serial.print(F(", motor: "));
+  // Serial.print(controlPin);
+  // Serial.print(F(" on board with address: "));
+  // Serial.println(addrOfMotorShield, HEX);
 }
 
 bool MotorShieldValve::isOpen() const {
@@ -46,6 +58,10 @@ String MotorShieldValve::getStatus() const {
 
 String MotorShieldValve::getType() const {
   return this->type == ValveType::INLET ? "Inlet valve" : "Outlet valve";
+}
+
+const __FlashStringHelper* MotorShieldValve::getTypeChar() const {
+  return this->type == ValveType::INLET ? F("Inlet valve") : F("Outlet valve");
 }
 
 int MotorShieldValve::getValvePin() const {

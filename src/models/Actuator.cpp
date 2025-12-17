@@ -132,7 +132,7 @@ void Actuator::releasePressureFluidly(int pressureTime) {
   }
 }
 
-void Actuator::addPressureFluidlyWithOutflowValve(int pressureTime = 50) {
+void Actuator::addPressureFluidlyWithOutflowValve(int pressureTime) {
   int muscleSealingTime = 5;
   int openTime = 25;
   int outputOpenTime = 0;
@@ -171,7 +171,7 @@ void Actuator::addPressureFluidlyWithOutflowValve(int pressureTime = 50) {
   }
 }
 
-void Actuator::releasePressureFluidlyWithInputValve(int pressureTime = 50) {
+void Actuator::releasePressureFluidlyWithInputValve(int pressureTime) {
   int muscleSealingTime = 5;
   int openTime = 25;
   int inputOpenTime = 0;

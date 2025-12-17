@@ -7,19 +7,28 @@
 Valve::Valve(int controlPin, ValveType type) : IValve(controlPin, type) {
   pinMode(this->controlPin, OUTPUT);
   digitalWrite(this->controlPin, LOW);
-  Serial.println(getType() + " initialiazed, pin:" + this->controlPin);
+  Serial.print(F("Valve initialized: "));
+  Serial.print(getTypeChar());
+  Serial.print(F(", pin: "));
+  Serial.println(this->controlPin);
 }
 
 void Valve::open() {
   digitalWrite(controlPin, HIGH);
-  Serial.print("PHYSICAL MOVEMENT: Opening " + getType() + ", pin: ");
-  Serial.println(controlPin);
+  // Avoid String concatenation to prevent heap fragmentation
+  // Serial.print(F("PHYSICAL MOVEMENT: Opening "));
+  // Serial.print(getTypeChar());
+  // Serial.print(F(", pin: "));
+  // Serial.println(controlPin);
 }
 
 void Valve::close() {
   digitalWrite(controlPin, LOW);
-  Serial.print("PHYSICAL MOVEMENT: Closing " + getType() + ", pin: ");
-  Serial.println(controlPin);
+  // Avoid String concatenation to prevent heap fragmentation
+  // Serial.print(F("PHYSICAL MOVEMENT: Closing "));
+  // Serial.print(getTypeChar());
+  // Serial.print(F(", pin: "));
+  // Serial.println(controlPin);
 }
 
 bool Valve::isOpen() const {
@@ -32,6 +41,10 @@ String Valve::getStatus() const {
 
 String Valve::getType() const {
   return this->type == ValveType::INLET ? "Inlet valve" : "Outlet valve";
+}
+
+const __FlashStringHelper* Valve::getTypeChar() const {
+  return this->type == ValveType::INLET ? F("Inlet valve") : F("Outlet valve");
 }
 
 int Valve::getValvePin() const {

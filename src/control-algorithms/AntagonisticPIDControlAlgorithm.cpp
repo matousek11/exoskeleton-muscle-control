@@ -7,9 +7,10 @@ AntagonisticPIDControlAlgorithm::AntagonisticPIDControlAlgorithm() {
   Serial.println("Creating PID 1 DOF antagonistic control algorithm class");
 }
 
-void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, Actuator* backwardActuator,
-                                                    Gyroscope* gyroscope, int controlTime, ControlTarget targets[],
-                                                    size_t number_of_targets, Gyroscope* upperGyroscope) {
+void AntagonisticPIDControlAlgorithm::controlMuscle(StateMachineActuator* forwardActuator,
+                                                    StateMachineActuator* backwardActuator, Gyroscope* gyroscope,
+                                                    int controlTime, ControlTarget targets[], size_t number_of_targets,
+                                                    Gyroscope* upperGyroscope) {
   // --- PID tuning parameters ---
   const float Kp = 0.1f;    // Proportional gain
   const float Ki = 0.24f;   // Integral gain
@@ -21,6 +22,7 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
   // --- Control setup ---
   const int loopDelay = 0;  // PID update every 50ms
   unsigned long previousTime = millis();
+  unsigned long lastDataPrint = millis();
 
   float integral = 0.0f;
   float previousError = 0.0f;
@@ -45,6 +47,8 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
       char c = Serial.read();
       if (c == 'c') {
         Serial.println("--- Emergency stop ---");
+        forwardActuator->cancel();
+        backwardActuator->cancel();
         forwardActuator->extend();
         backwardActuator->extend();
         delay(1500);
@@ -56,13 +60,11 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
     float deltaTime = (now - previousTime) / 1000.0f;  // seconds
 
     // --- Read current angle ---
-    for (int i = 0; i < 30; i++) {
-      if (upperGyroscope != nullptr) {
-        upperGyroscope->updateValues(gyroscope);
-        gyroscope->updateValues();
-      } else {
-        gyroscope->updateValues();
-      }
+    if (upperGyroscope != nullptr) {
+      upperGyroscope->updateValues(gyroscope);
+      gyroscope->updateValues();
+    } else {
+      gyroscope->updateValues();
     }
 
     float currentAngle = 0;
@@ -70,16 +72,14 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
       currentAngle = gyroscope->getXAngle();
     } else {
       currentAngle = upperGyroscope->getXAngle();
-      //Serial.println("Upper gyroscope:" + String(currentAngle));
       float lowerGyroscopeAngle = gyroscope->getXAngle();
       currentAngle -= lowerGyroscopeAngle;
-      //Serial.println("Lower gyroscope:" + String(lowerGyroscopeAngle));
-      //Serial.println(currentAngle);
     }
 
     // --- PID calculations ---
     float error = targetXAngle - currentAngle;
-    if (abs(error) > targetTolerance) {  // do not calculate when in target tolerance
+    // do not calculate when in target tolerance or actuators not idle
+    if (abs(error) > targetTolerance && !forwardActuator->isBusy() && !backwardActuator->isBusy()) {
       integral += error * deltaTime;
       int clamp = 300;
       if (integral > clamp) {
@@ -114,8 +114,8 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
           }
 
           // Increase angle (move forward)
-          forwardActuator->addPressureFluidlyWithOutflowValve(abs(output));
-          backwardActuator->releasePressureFluidlyWithInputValve((abs(output) * 1.2));
+          forwardActuator->startAddPressure(abs(output));
+          backwardActuator->startReleasePressure((abs(output) * 1.2));
         } else if (abs(error) > targetTolerance && output < 0) {
           // move backward
           if (abs(output) > valveOpenTimeClamp) {  // upper clamp
@@ -123,8 +123,8 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
           }
 
           // Decrease angle (move backward)
-          forwardActuator->releasePressureFluidlyWithInputValve((abs(output) * 1.2));
-          backwardActuator->addPressureFluidlyWithOutflowValve(abs(output));
+          forwardActuator->startReleasePressure((abs(output) * 1.2));
+          backwardActuator->startAddPressure(abs(output));
         } else {
           // Small correction area — hold position
           forwardActuator->closeInput();
@@ -135,38 +135,52 @@ void AntagonisticPIDControlAlgorithm::controlMuscle(Actuator* forwardActuator, A
       }
     }
 
-    // --- Debug info ---
-    Serial.print("Target: ");
-    Serial.print(targetXAngle);
-    Serial.print(" | Angle: ");
-    Serial.print(currentAngle);
-    Serial.print(" | Error: ");
-    Serial.print(error);
-    Serial.print(" | Output: ");
-    Serial.print(output);
-    Serial.print(" | Time (ms): ");
-    Serial.print(now);
-    Serial.print(" | Prop: ");
-    Serial.print(proportionalPart);
-    Serial.print(" | Der: ");
-    Serial.print(derivativePart);
-    Serial.print(" | Int: ");
-    Serial.print(integralPart);
+    forwardActuator->updateStateMachine();
+    backwardActuator->updateStateMachine();
+
+    if (millis() - lastDataPrint > 200) {
+      // --- Debug info ---
+      Serial.print("Target: ");
+      Serial.print(targetXAngle);
+      Serial.print(" | Angle: ");
+      Serial.print(currentAngle);
+      Serial.print(" | Error: ");
+      Serial.print(error);
+      Serial.print(" | Output: ");
+      Serial.print(output);
+      Serial.print(" | Time (ms): ");
+      Serial.print(now);
+      Serial.print(" | Prop: ");
+      Serial.print(proportionalPart);
+      Serial.print(" | Der: ");
+      Serial.print(derivativePart);
+      Serial.print(" | Int: ");
+      Serial.print(integralPart);
+      Serial.print(" | Loop time (ms): ");
+      Serial.println(millis() - loopStartTime);
+
+      lastDataPrint = millis();
+    }
+
+    // delay(loopDelay);
 
     // Prepare for next iteration
     previousError = error;
     previousTime = now;
 
-    delay(loopDelay);
-
-    Serial.print(" | Loop time (ms): ");
-    Serial.println(millis() - loopStartTime);
-
     targetXAngle = getTargetAngle();
     isFirstCycle = false;
   }
 
+  Serial.println(F("End of control"));
+  Serial.print(F("Deleting targets, count: "));
+  Serial.println(numberOfTargets);
+  Serial.print(F("specificControlTargets ptr: "));
+  Serial.println((unsigned long)specificControlTargets, HEX);
+
   deleteTargets();
+
+  Serial.println(F("Targets deleted successfully"));
 }
 
 float AntagonisticPIDControlAlgorithm::getTargetAngle() {
@@ -205,13 +219,22 @@ void AntagonisticPIDControlAlgorithm::setSpecificControlTargets(ControlTarget ta
 }
 
 void AntagonisticPIDControlAlgorithm::deleteTargets() {
+  Serial.println(F("DEBUG: deleteTargets() called"));
   if (specificControlTargets != nullptr) {
+    Serial.print(F("DEBUG: Deleting "));
+    Serial.print(numberOfTargets);
+    Serial.println(F(" targets"));
     for (size_t i = 0; i < numberOfTargets; ++i) {
+      Serial.print(F("DEBUG: Deleting target "));
+      Serial.println(i);
       delete specificControlTargets[i];
     }
+    Serial.println(F("DEBUG: Deleting array"));
     delete[] specificControlTargets;
     specificControlTargets = nullptr;
+    Serial.println(F("DEBUG: Array deleted"));
   }
+  Serial.println(F("DEBUG: deleteTargets() complete"));
 }
 
 AntagonisticPIDControlAlgorithm::~AntagonisticPIDControlAlgorithm() {

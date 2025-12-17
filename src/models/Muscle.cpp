@@ -8,8 +8,10 @@ Muscle::Muscle(IValve* inputValve, IValve* outputValve) {
   this->inputValve = inputValve;
   this->outputValve = outputValve;
   extend();
-  Serial.println(String("Muscle initialized, inlet pin: ") + inputValve->getValvePin() + String(", outlet pin: ") +
-                 outputValve->getValvePin());
+  Serial.print(F("Muscle initialized, inlet pin: "));
+  Serial.print(inputValve->getValvePin());
+  Serial.print(F(", outlet pin: "));
+  Serial.println(outputValve->getValvePin());
 }
 
 void Muscle::extend() {
@@ -149,6 +151,7 @@ void Muscle::cycleTest() {
     extend();
     delay(700);
     numberOfCycles += 1;
-    Serial.println("Cycle: " + String(numberOfCycles));
+    Serial.print(F("Cycle: "));
+    Serial.println(numberOfCycles);
   }
 }

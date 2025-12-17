@@ -9,6 +9,7 @@
 #include "./../models/Actuator.h"
 #include "./../models/Gyroscope.h"
 #include "./../models/Muscle.h"
+#include "./../models/StateMachineActuator.h"
 #include "Arduino.h"
 
 /**
@@ -23,6 +24,11 @@ struct SystemComponents {
   TwoDOFAntagonisticPIDControlAlgorithm* twoDOFAntagonisticControlAlgorithm;
   TwoDOFAntagonisticParticularMuscleControlAlgorithm* twoDOFAntagonisticParticularMuscleControlAlgorithm;
   ThreeDOFAntagonisticParticularMuscleControlAlgorithm* threeDOFAntagonisticParticularMuscleControlAlgorithm;
+
+  StateMachineActuator* stateMachineFrontActuator;
+  StateMachineActuator* stateMachineBackActuator;
+  StateMachineActuator* stateMachineTopFrontActuator;
+  StateMachineActuator* stateMachineTopBackActuator;
 
   Actuator* frontActuator;
   Actuator* backActuator;

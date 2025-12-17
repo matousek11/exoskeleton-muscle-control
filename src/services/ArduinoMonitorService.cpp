@@ -74,14 +74,17 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
     systemComponents.controlAlgorithm->controlMuscle(systemComponents.muscle, systemComponents.gyroscope, 25000,
                                                      targets, 4);
   } else if (command.equalsIgnoreCase("t-ant-dyn")) {
-    Serial.println("target -20, 0 degrees, 10 degrees and -10 degrees");
+    Serial.println(F("target -20, 0 degrees, 10 degrees and -10 degrees"));
     ControlTarget targets[4] = {ControlTarget(0.0f, 70.0f, 0.0f), ControlTarget(0.25f, 90.0f, 0.0f),
                                 ControlTarget(0.5f, 100.0f, 0.0f), ControlTarget(0.75f, 80.0f, 0.0f)};
     systemComponents.antagonisticControlAlgorithm->controlMuscle(
-        systemComponents.frontActuator, systemComponents.backActuator, systemComponents.gyroscope, 23000, targets, 4,
-        nullptr);
+        systemComponents.stateMachineFrontActuator, systemComponents.stateMachineBackActuator,
+        systemComponents.gyroscope, 23000, targets, 4, nullptr);
 
+    Serial.println(F("DEBUG: Returned from controlMuscle"));
+    Serial.println(F("DEBUG: About to close all valves"));
     closeAllValves(systemComponents);
+    Serial.println(F("DEBUG: All valves closed"));
   } else if (command.equalsIgnoreCase("t-ant-dyn-2-dof")) {
     Serial.println("target -20;0, 0;0 degrees, 10;0 degrees and -10;0 degrees");
     ControlTarget targets[4] = {ControlTarget(0.0f, 70.0f, 0.0f), ControlTarget(0.25f, 90.0f, 0.0f),
@@ -117,8 +120,8 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
     ControlTarget targets[3] = {ControlTarget(0.0f, -30.0f, 0.0f), ControlTarget(0.25f, -70.0f, 0.0f),
                                 ControlTarget(0.75f, -10.0f, 0.0f)};
     systemComponents.antagonisticControlAlgorithm->controlMuscle(
-        systemComponents.topFrontActuator, systemComponents.topBackActuator, systemComponents.gyroscope, 30000, targets,
-        3, systemComponents.upperGyroscope);
+        systemComponents.stateMachineTopFrontActuator, systemComponents.stateMachineTopBackActuator,
+        systemComponents.gyroscope, 30000, targets, 3, systemComponents.upperGyroscope);
 
     closeAllValves(systemComponents);
   } else if (command.equalsIgnoreCase("stabilize")) {
@@ -210,56 +213,42 @@ void ArduinoMonitorService::controlThroughMonitor(const SystemComponents& system
 void ArduinoMonitorService::printPossibleCommands(String* inputCommand, bool unknownCommand) {
   Serial.println();
   if (inputCommand != nullptr) {
-    Serial.println("---- Input ----");
+    Serial.println(F("---- Input ----"));
     Serial.println(*inputCommand);
     if (unknownCommand == true) {
-      Serial.println("Unknown command");
+      Serial.println(F("Unknown command"));
     }
   }
 
-  Serial.println("--- Commands ---");
-  Serial.println(
-      "Muscle commands: 'e' - extend, 'r' - retract, '+' - pressurize valve for 25ms, '-' - depressurize valve for "
-      "25ms, 'test' - tests muscles valves, 'status' - status of muscle");
-  Serial.println(
-      "Commands for valves on muscle: 'io' - open input valve, 'ic' - close "
-      "input valve, 'oo' - "
-      "open output valve, 'oc' - close output valve");
-  Serial.println(
-      "Commands for gyroscope (MPU6050): 'bdg' - display bottom gyroscope output - stop by 'c', 'tdg' - "
-      "display top gyroscope output - stop by 'c'");
-  Serial.println(
-      "Commands for feedback loop algorithms: 'stabilize' - put test stand into start position, 't70' - target 70 "
-      "degrees, 't-dyn' - target 70 and then 30 degrees, "
-      "'t-ant-dyn' - target -20, 0, 10 and -20 degrees, 't-ant-dyn-2-dof' - target -20;0, 0;0, 10;0 and -20;0, "
-      "'t-ant-dyn-2-dof-v2' - target -20;80, 0;100, 10;80 and -20;90 with particular muscles"
-      "degrees, 't-ant-dyn-3-dof' - target -20;-10;-90 deg, 0;10;-10 deg, 10;-10;-100 deg and -10;0;-10 deg");
-  Serial.println(
-      "Commands for feedback loop algorithms for upper leg: 't-up-ant-dyn' - test for upper part of leg - target -30, "
-      "-70, -100 and -10 degrees - stop by c");
-  Serial.println(
-      "Top front actuator commands: 'tfe' - top front extend, 'tfr' - top front retract, 'tf+' - add pressure to top "
-      "front, 'tf-' - "
-      "remove pressure from top front, 'tf-test' - test run of top front actuators");
-  Serial.println(
-      "Top back actuator commands: 'tbe' - top back extend, 'tbr' - top back retract, 'tb+' - add pressure to top "
-      "back, 'tb-' - "
-      "remove pressure from top back, 'tb-test' - test run of top back actuators");
-  Serial.println(
-      "Front actuator commands: 'fe' - front extend, 'fr' - front retract, 'f+' - add pressure to front, 'f-' - "
-      "remove pressure from front, 'f-test' - test run of front actuators");
-  Serial.println(
-      "Back actuator commands: 'be' - back extend, 'br' - back retract, 'b+' - add pressure to back, 'b-' - "
-      "remove pressure from back, 'b-test' - test run of back actuators");
-  Serial.println(
-      "Back actuator commands: 'le' - left extend, 'lr' - left retract, 'l+' - add pressure to left, 'l-' - "
-      "remove pressure from left, 'l-test' - test run of left actuators");
-  Serial.println(
-      "Right actuator commands: 're' - right extend, 'rr' - right retract, 'r+' - add pressure to right, 'r-' - "
-      "remove pressure from right, 'r-test' - test run of right actuators");
-  Serial.println("All valves commands: 'close-all/c' - close all valves");
-  Serial.println("Tests: 'cycle-test' - runs cycle test on muscle, cancelled by c");
-  Serial.println("Debug tools: 'i2c' - I2C device scanner");
+  Serial.println(F("--- Commands ---"));
+  Serial.println(F("Muscle commands: 'e' - extend, 'r' - retract, '+' - pressurize valve for 25ms,"));
+  Serial.println(F("  '-' - depressurize valve for 25ms, 'test' - tests muscles valves, 'status' - status of muscle"));
+  Serial.println(F("Commands for valves on muscle: 'io' - open input valve, 'ic' - close input valve,"));
+  Serial.println(F("  'oo' - open output valve, 'oc' - close output valve"));
+  Serial.println(F("Commands for gyroscope (MPU6050): 'bdg' - display bottom gyroscope output - stop by 'c',"));
+  Serial.println(F("  'tdg' - display top gyroscope output - stop by 'c'"));
+  Serial.println(F("Commands for feedback loop algorithms: 'stabilize' - put test stand into start position,"));
+  Serial.println(F("  't70' - target 70 degrees, 't-dyn' - target 70 and then 30 degrees,"));
+  Serial.println(F("  't-ant-dyn' - target -20, 0, 10 and -20 degrees,"));
+  Serial.println(F("  't-ant-dyn-2-dof' - target -20;0, 0;0, 10;0 and -20;0,"));
+  Serial.println(F("  't-ant-dyn-2-dof-v2' - target -20;80, 0;100, 10;80 and -20;90 with particular muscles,"));
+  Serial.println(F("  't-ant-dyn-3-dof' - target -20;-10;-90 deg, 0;10;-10 deg, 10;-10;-100 deg and -10;0;-10 deg"));
+  Serial.println(F("Commands for upper leg: 't-up-ant-dyn' - target -30, -70, -100 and -10 degrees - stop by c"));
+  Serial.println(F("Top front actuator: 'tfe' - extend, 'tfr' - retract, 'tf+' - add pressure,"));
+  Serial.println(F("  'tf-' - remove pressure, 'tf-test' - test run"));
+  Serial.println(F("Top back actuator: 'tbe' - extend, 'tbr' - retract, 'tb+' - add pressure,"));
+  Serial.println(F("  'tb-' - remove pressure, 'tb-test' - test run"));
+  Serial.println(F("Front actuator: 'fe' - extend, 'fr' - retract, 'f+' - add pressure,"));
+  Serial.println(F("  'f-' - remove pressure, 'f-test' - test run"));
+  Serial.println(F("Back actuator: 'be' - extend, 'br' - retract, 'b+' - add pressure,"));
+  Serial.println(F("  'b-' - remove pressure, 'b-test' - test run"));
+  Serial.println(F("Left actuator: 'le' - extend, 'lr' - retract, 'l+' - add pressure,"));
+  Serial.println(F("  'l-' - remove pressure, 'l-test' - test run"));
+  Serial.println(F("Right actuator: 're' - extend, 'rr' - retract, 'r+' - add pressure,"));
+  Serial.println(F("  'r-' - remove pressure, 'r-test' - test run"));
+  Serial.println(F("All valves commands: 'close-all/c' - close all valves"));
+  Serial.println(F("Tests: 'cycle-test' - runs cycle test on muscle, cancelled by c"));
+  Serial.println(F("Debug tools: 'i2c' - I2C device scanner"));
 }
 
 void ArduinoMonitorService::clearSerialMonitor() {

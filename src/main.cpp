@@ -9,6 +9,7 @@
 #include "models/Actuator.h"
 #include "models/Gyroscope.h"
 #include "models/Muscle.h"
+#include "models/StateMachineActuator.h"
 #include "models/Valve.h"
 #include "services/ArduinoMonitorService.h"
 #include "services/ValveFactory.h"
@@ -70,10 +71,14 @@ void setup() {
   topFrontInletValves[0] = valveFactory->createValve(12, ValveType::INLET);
   topFrontOutletValves[0] = valveFactory->createValve(3, ValveType::OUTLET, 0x61);
   systemComponents.topFrontActuator = new Actuator(topFrontInletValves, 1, topFrontOutletValves, 1);
+  systemComponents.stateMachineTopFrontActuator =
+      new StateMachineActuator(topFrontInletValves, 1, topFrontOutletValves, 1);
 
   topBackInletValves[0] = valveFactory->createValve(11, ValveType::INLET);
   topBackOutletValves[0] = valveFactory->createValve(4, ValveType::OUTLET, 0x61);
   systemComponents.topBackActuator = new Actuator(topBackInletValves, 1, topBackOutletValves, 1);
+  systemComponents.stateMachineTopBackActuator =
+      new StateMachineActuator(topBackInletValves, 1, topBackOutletValves, 1);
 
   // Antagonistic 1 and 2 DOF actuator algorithm parts initialization
   frontInletValves[0] = valveFactory->createValve(4, ValveType::INLET, 0x60);
@@ -81,6 +86,7 @@ void setup() {
   frontOutletValves[0] = valveFactory->createValve(1, ValveType::OUTLET, 0x60);
   frontOutletValves[1] = valveFactory->createValve(3, ValveType::OUTLET, 0x60);
   systemComponents.frontActuator = new Actuator(frontInletValves, 2, frontOutletValves, 2);
+  systemComponents.stateMachineFrontActuator = new StateMachineActuator(frontInletValves, 2, frontOutletValves, 2);
 
   leftInletValves[0] = valveFactory->createValve(13, ValveType::INLET);
   leftInletValves[1] = valveFactory->createValve(4, ValveType::INLET);
@@ -99,6 +105,7 @@ void setup() {
   backOutletValves[0] = valveFactory->createValve(7, ValveType::OUTLET);
   backOutletValves[1] = valveFactory->createValve(6, ValveType::OUTLET);
   systemComponents.backActuator = new Actuator(backInletValves, 2, backOutletValves, 2);
+  systemComponents.stateMachineBackActuator = new StateMachineActuator(backInletValves, 2, backOutletValves, 2);
 
   // Antagonistic 2 DOF particular muscle algorithm parts initialization
   leftFrontInletValves[0] = valveFactory->createValve(13, ValveType::INLET);

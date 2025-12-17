@@ -5,6 +5,7 @@
 #include "./../models/ControlTarget.h"
 #include "./../models/Gyroscope.h"
 #include "./../models/SpecificControlTarget.h"
+#include "./../models/StateMachineActuator.h"
 
 /**
  * Implements antagonistic PID algorithm used to control system and get it into desired state, actuators opposite to
@@ -41,8 +42,9 @@ class AntagonisticPIDControlAlgorithm {
    * @param targets consists of angle targets that should algorithm go to in order
    * @param number_of_targets number of angle targets in array
    */
-  void controlMuscle(Actuator* forwardActuator, Actuator* backwardActuator, Gyroscope* gyroscope, int controlTime,
-                     ControlTarget targets[], size_t number_of_targets, Gyroscope* upperGyroscope = nullptr);
+  void controlMuscle(StateMachineActuator* forwardActuator, StateMachineActuator* backwardActuator,
+                     Gyroscope* gyroscope, int controlTime, ControlTarget targets[], size_t number_of_targets,
+                     Gyroscope* upperGyroscope = nullptr);
 
   void deleteTargets();
 };

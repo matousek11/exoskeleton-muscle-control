@@ -19,6 +19,11 @@ class MotorShieldValve : public IValve {
   String getStatus() const override;
   String getType() const override;
   int getValvePin() const override;
+
+  /**
+   * Returns type as flash string to avoid heap allocation
+   */
+  const __FlashStringHelper* getTypeChar() const;
 };
 
 #endif
